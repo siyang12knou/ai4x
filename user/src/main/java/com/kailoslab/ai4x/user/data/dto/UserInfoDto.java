@@ -1,4 +1,4 @@
-package com.kailoslab.ai4x.commons.data.dto;
+package com.kailoslab.ai4x.user.data.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

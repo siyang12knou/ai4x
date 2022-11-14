@@ -1,7 +1,8 @@
-package com.kailoslab.ai4x.commons.data.entity;
+package com.kailoslab.ai4x.user.data.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.kailoslab.ai4x.commons.code.UserType;
+import com.kailoslab.ai4x.commons.data.entity.BasicEntity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
