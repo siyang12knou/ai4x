@@ -10,9 +10,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -22,15 +20,12 @@ public class LogicService {
     private final Map<ProgramLang, LanguageHelper> languageHelperMap;
     private final LogicRepository logicRepository;
     private final LogicFragmentRepository logicFragmentRepository;
-    private final String[] langs;
 
-    public LogicService(LogicRepository logicRepository, LogicFragmentRepository logicFragmentRepository, List<LanguageHelper> contextServiceList) {
+    public LogicService(LogicRepository logicRepository, LogicFragmentRepository logicFragmentRepository) {
         this.logicRepository = logicRepository;
         this.logicFragmentRepository = logicFragmentRepository;
         sessionContext = new HashMap<>();
         languageHelperMap = new HashMap<>(ProgramLang.values().length);
-        contextServiceList.forEach(contextService -> languageHelperMap.put(contextService.getProgramLang(), contextService));
-        langs = languageHelperMap.keySet().stream().map(programLang -> programLang.name()).collect(Collectors.toList()).toArray(new String[]{});
     }
 
     public LogicEntity saveLogic(LogicEntity logic) {
