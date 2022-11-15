@@ -8,6 +8,8 @@ import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Table;
 
+import java.time.LocalDate;
+
 @NoArgsConstructor
 @Getter
 @Setter
@@ -21,6 +23,8 @@ public class UserEntity extends PrivateInfoEntity {
     private String email;
     private String tel;
     private UserType userType;
+    private LocalDate contractStartDate;
+    private LocalDate contractEndDate;
     private Boolean enabled = true;
 
     public UserEntity(String id, String password, String email) {
