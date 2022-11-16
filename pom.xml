@@ -10,7 +10,12 @@
 
     <modules>
         <module>commons</module>
+        <module>user</module>
         <module>batch</module>
+        <module>collector</module>
+        <module>logic</module>
+        <module>aws</module>
+        <module>mosquitto</module>
     </modules>
 
 </project>
