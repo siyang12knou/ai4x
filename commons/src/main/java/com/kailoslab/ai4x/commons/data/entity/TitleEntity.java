@@ -9,7 +9,7 @@ import org.springframework.data.relational.core.mapping.Table;
 @NoArgsConstructor
 @Setter
 @Getter
-@Table(name = "tb_ai4x_title")
+@Table(name = "tb_title")
 public class TitleEntity {
     @Id
     private String id;

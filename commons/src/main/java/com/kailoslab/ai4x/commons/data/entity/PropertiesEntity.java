@@ -9,7 +9,7 @@ import org.springframework.data.relational.core.mapping.Table;
 @NoArgsConstructor
 @Setter
 @Getter
-@Table(name = "tb_ai4x_properties")
+@Table(name = "tb_properties")
 public class PropertiesEntity {
     @Id
     private String id;

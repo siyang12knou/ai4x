@@ -15,7 +15,7 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Setter
-@Table(name = "tb_ai4x_user")
+@Table(name = "tb_user")
 public class UserEntity extends PrivateInfoEntity {
     @Id
     private String id;
