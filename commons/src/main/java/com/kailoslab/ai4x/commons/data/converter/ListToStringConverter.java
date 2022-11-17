@@ -15,9 +15,6 @@ public class ListToStringConverter implements Converter<List<Object>, String> {
 
     @Override
     public String convert(List<Object> jsonData) {
-        if(jsonData == null) {
-            jsonData = Collections.emptyList();
-        }
 
         try {
             return Constants.JSON_MAPPER.writeValueAsString(jsonData);
