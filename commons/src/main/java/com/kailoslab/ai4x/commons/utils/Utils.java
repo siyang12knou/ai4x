@@ -3,14 +3,16 @@ package com.kailoslab.ai4x.commons.utils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.config.YamlPropertiesFactoryBean;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.Resource;
 
 import java.io.FileNotFoundException;
+import java.lang.reflect.Method;
 import java.lang.reflect.Type;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -93,5 +95,48 @@ public class Utils {
 
     public static String toFirstLowerCase(String text) {
         return Character.toLowerCase(text.charAt(0)) + text.substring(1);
+    }
+
+    public static List<String> getScanPackages(ApplicationContext applicationContext) {
+        String[] springBootAppBeanName = applicationContext.getBeanNamesForAnnotation(SpringBootApplication.class);
+        List<String> scanPackages = new ArrayList<>(Collections.singleton("com.kailoslab.ai4x"));
+        scanPackages.addAll(Arrays.stream(springBootAppBeanName)
+                .map(name -> applicationContext.getBean(name).getClass().getPackageName())
+                .collect(Collectors.toList()));
+
+        return scanPackages;
+    }
+
+    public static String getString(Object object, String... methodNames) {
+        String result = null;
+        for(String methodName: methodNames) {
+            try {
+                Method m = object.getClass().getMethod(methodName, null);
+                Object obj = m.invoke(object, null);
+                if(ObjectUtils.isNotEmpty(obj)) {
+                    result = obj.toString();
+                    break;
+                }
+            } catch (Throwable ignored) {
+            }
+        }
+
+        return result;
+    }
+
+    public static Integer getInt(Object object, String... methodNames) {
+        Integer result = 0;
+        for(String methodName: methodNames) {
+            try {
+                Method m = object.getClass().getMethod(methodName, null);
+                Object obj = m.invoke(object, null);
+                if(ObjectUtils.isNotEmpty(obj)) {
+                    result = Integer.parseInt(obj.toString());
+                    break;
+                }
+            } catch (Throwable ignored) {}
+        }
+
+        return result;
     }
 }

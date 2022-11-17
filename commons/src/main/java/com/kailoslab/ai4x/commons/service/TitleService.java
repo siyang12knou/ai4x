@@ -7,7 +7,6 @@ import com.kailoslab.ai4x.commons.utils.Utils;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.reflections.Reflections;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationListener;
@@ -30,11 +29,7 @@ public class TitleService implements ApplicationListener<ApplicationStartedEvent
 
     @Override
     public void onApplicationEvent(ApplicationStartedEvent event) {
-        String[] springBootAppBeanName = applicationContext.getBeanNamesForAnnotation(SpringBootApplication.class);
-        List<String> scanPackages = new ArrayList<>(Collections.singleton("com.kailoslab.ai4x"));
-        scanPackages.addAll(Arrays.stream(springBootAppBeanName)
-                .map(name -> applicationContext.getBean(name).getClass().getPackageName())
-                .collect(Collectors.toList()));
+        List<String> scanPackages = Utils.getScanPackages(applicationContext);
         scanPackages.forEach(scanPackage -> {
             Reflections reflections = new Reflections(scanPackage,
                     TypesAnnotated, FieldsAnnotated, MethodsAnnotated );
