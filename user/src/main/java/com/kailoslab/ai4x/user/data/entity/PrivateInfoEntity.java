@@ -5,11 +5,14 @@ import com.kailoslab.ai4x.commons.data.entity.BasicEntity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.data.annotation.Id;
+
+import javax.persistence.Id;
+import javax.persistence.MappedSuperclass;
 
 @NoArgsConstructor
 @Getter
 @Setter
+@MappedSuperclass
 public class PrivateInfoEntity extends BasicEntity {
     @Id
     private String id;

@@ -7,6 +7,7 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.config.YamlPropertiesFactoryBean;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.io.Resource;
 
 import java.io.FileNotFoundException;
@@ -100,9 +101,26 @@ public class Utils {
     public static List<String> getScanPackages(ApplicationContext applicationContext) {
         String[] springBootAppBeanName = applicationContext.getBeanNamesForAnnotation(SpringBootApplication.class);
         List<String> scanPackages = new ArrayList<>(Collections.singleton("com.kailoslab.ai4x"));
-        scanPackages.addAll(Arrays.stream(springBootAppBeanName)
-                .map(name -> applicationContext.getBean(name).getClass().getPackageName())
-                .collect(Collectors.toList()));
+        Arrays.stream(springBootAppBeanName)
+            .forEach(name -> {
+                Class<?> applicationClass = applicationContext.getBean(name).getClass();
+                ComponentScan componentScan = applicationClass.getAnnotation(ComponentScan.class);
+                if(componentScan == null && applicationClass.getSuperclass() != null) {
+                    Class<?> applicationSuperClass = applicationClass.getSuperclass();
+                    componentScan = applicationSuperClass.getAnnotation(ComponentScan.class);
+                }
+
+                if(componentScan == null) {
+                    scanPackages.add(applicationContext.getBean(name).getClass().getPackageName());
+                } else {
+                    for (Class<?> basePackageClass :
+                            componentScan.basePackageClasses()) {
+                        scanPackages.add(basePackageClass.getPackageName());
+                    }
+
+                    Collections.addAll(scanPackages, componentScan.basePackages());
+                }
+            });
 
         return scanPackages;
     }

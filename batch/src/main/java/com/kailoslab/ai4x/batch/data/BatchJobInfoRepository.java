@@ -2,14 +2,14 @@ package com.kailoslab.ai4x.batch.data;
 
 import com.kailoslab.ai4x.batch.data.entity.BatchJobInfo;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface BatchJobInfoRepository extends CrudRepository<BatchJobInfo, String> {
+public interface BatchJobInfoRepository extends JpaRepository<BatchJobInfo, String> {
     default String generateId(String jobGroup, String jobName) {
         return "%s-%s".formatted(StringUtils.trimToEmpty(jobGroup), StringUtils.trimToEmpty(jobName));
     }

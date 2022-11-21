@@ -5,14 +5,16 @@ import com.kailoslab.ai4x.commons.code.Level;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.relational.core.mapping.Table;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.time.LocalDateTime;
 
 @NoArgsConstructor
 @Getter
 @Setter
+@Entity
 @Table(name = "tb_log")
 public class Log {
     @Id

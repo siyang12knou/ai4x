@@ -8,4 +8,5 @@ public interface Constants {
     String SYSTEM_ID = "system";
     String PATH_API_PREFIX = "/api";
     String DEFAULT_GROUP_ID = "0000000000";
+    int ORDINAL_START = 0;
 }

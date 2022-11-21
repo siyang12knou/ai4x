@@ -1,13 +1,16 @@
 package com.kailoslab.ai4x.user.data.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.kailoslab.ai4x.commons.data.converter.ListConverter;
 import com.kailoslab.ai4x.user.code.Role;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.relational.core.mapping.Table;
 
+import javax.persistence.Convert;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
@@ -15,6 +18,7 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Setter
+@Entity
 @Table(name = "tb_user")
 public class UserEntity extends PrivateInfoEntity {
     @Id
@@ -24,6 +28,7 @@ public class UserEntity extends PrivateInfoEntity {
     private String name;
     private String email;
     private String tel;
+    @Convert(converter = ListConverter.class)
     private List<String> role;
     private LocalDate contractStartDate;
     private LocalDate contractEndDate;

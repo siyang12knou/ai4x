@@ -6,6 +6,8 @@ import com.kailoslab.ai4x.commons.annotation.Title;
 @CodeGroup
 @Title("언어")
 public enum Language {
+    @Title("한국어")
     ko,
+    @Title("영어")
     en
 }

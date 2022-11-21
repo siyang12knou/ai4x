@@ -1,7 +1,5 @@
 package com.kailoslab.ai4x.logic.service;
 
-import com.kailoslab.ai4x.logic.code.ProgramLang;
-import com.kailoslab.ai4x.logic.data.LogicFragmentRepository;
 import com.kailoslab.ai4x.logic.data.LogicRepository;
 import com.kailoslab.ai4x.logic.data.entity.LogicEntity;
 import lombok.extern.slf4j.Slf4j;
@@ -17,15 +15,11 @@ import java.util.Map;
 public class LogicService {
 
     private final Map<String, Object> sessionContext;
-    private final Map<ProgramLang, LanguageHelper> languageHelperMap;
     private final LogicRepository logicRepository;
-    private final LogicFragmentRepository logicFragmentRepository;
 
-    public LogicService(LogicRepository logicRepository, LogicFragmentRepository logicFragmentRepository) {
+    public LogicService(LogicRepository logicRepository) {
         this.logicRepository = logicRepository;
-        this.logicFragmentRepository = logicFragmentRepository;
         sessionContext = new HashMap<>();
-        languageHelperMap = new HashMap<>(ProgramLang.values().length);
     }
 
     public LogicEntity saveLogic(LogicEntity logic) {

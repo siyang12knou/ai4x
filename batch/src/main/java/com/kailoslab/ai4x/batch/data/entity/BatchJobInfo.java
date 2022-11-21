@@ -4,13 +4,16 @@ import com.kailoslab.ai4x.batch.code.JobStatus;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.relational.core.mapping.Table;
+
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
 @NoArgsConstructor
 @Getter
 @Setter
-@Table(name = "tb_ai4x_batch_job_info")
+@Entity
+@Table(name = "tb_batch_job_info")
 public class BatchJobInfo {
 
     @Id

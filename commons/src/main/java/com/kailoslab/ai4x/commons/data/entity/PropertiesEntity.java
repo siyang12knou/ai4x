@@ -3,12 +3,15 @@ package com.kailoslab.ai4x.commons.data.entity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.relational.core.mapping.Table;
+
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
 @NoArgsConstructor
 @Setter
 @Getter
+@Entity
 @Table(name = "tb_properties")
 public class PropertiesEntity {
     @Id
