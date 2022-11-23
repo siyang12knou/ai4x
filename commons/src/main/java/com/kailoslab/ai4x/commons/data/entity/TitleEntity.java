@@ -1,5 +1,6 @@
 package com.kailoslab.ai4x.commons.data.entity;
 
+import com.kailoslab.ai4x.commons.annotation.Title;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -20,4 +21,8 @@ public class TitleEntity {
     private String lang;
     private String country;
     private String title;
+
+    public TitleEntity(String id) {
+        this.id = id;
+    }
 }

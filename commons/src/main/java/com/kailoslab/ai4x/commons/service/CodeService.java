@@ -4,6 +4,8 @@ import com.kailoslab.ai4x.commons.annotation.CodeGroup;
 import com.kailoslab.ai4x.commons.annotation.Title;
 import com.kailoslab.ai4x.commons.data.CodeRepository;
 import com.kailoslab.ai4x.commons.data.entity.CodeEntity;
+import com.kailoslab.ai4x.commons.data.entity.CodePK;
+import com.kailoslab.ai4x.commons.utils.Constants;
 import com.kailoslab.ai4x.commons.utils.Utils;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
@@ -48,13 +50,21 @@ public class CodeService implements ApplicationListener<ApplicationStartedEvent>
 
     public void saveCode(CodeGroup codeGroup, Class<?> codeGroupClass) {
         String codeGroupId = StringUtils.isNotEmpty(codeGroup.value()) ? codeGroup.value() : Utils.toFirstLowerCase(codeGroupClass.getSimpleName());
-
-        saveCode(new CodeEntity(codeGroupId, getTitle(codeGroupClass)));
+        CodePK pk = new CodePK(Constants.DEFAULT_GROUP_ID, codeGroupId);
+        CodeEntity codeGroupEntity = codeRepository.findById(pk).orElse(new CodeEntity(pk));
+        codeGroupEntity.setName(getTitle(codeGroupClass));
+        saveCode(codeGroupEntity);
         for(Object code: codeGroupClass.getEnumConstants()) {
             String id = Utils.getString(code, "name");
             String name = getTitle(codeGroupClass, code);
-            int ordinal = Utils.getInt(code, "ordinal");
-            if(!StringUtils.isAnyEmpty(id, name)) saveCode(new CodeEntity(codeGroupId, id, name, ordinal));
+            if(!StringUtils.isAnyEmpty(id, name)) {
+                int ordinal = Utils.getInt(code, "ordinal");
+                pk = new CodePK(codeGroupId, id);
+                CodeEntity codeEntity = codeRepository.findById(pk).orElse(new CodeEntity(pk));
+                codeEntity.setName(name);
+                codeEntity.setOrdinal(ordinal);
+                saveCode(codeEntity);
+            }
         }
     }
 

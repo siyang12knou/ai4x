@@ -30,13 +30,13 @@ public class CodeEntity extends BasicEntity {
     private String createdUser = Constants.SYSTEM_ID;
     private String modifiedUser = Constants.SYSTEM_ID;
 
-    public CodeEntity(String codeId, String name) {
-        this(Constants.DEFAULT_GROUP_ID, codeId, name, Constants.ORDINAL_START);
+    public CodeEntity(CodePK pk) {
+        this(pk, pk.getCodeId(), Constants.ORDINAL_START);
     }
 
-    public CodeEntity(String groupId, String codeId, String name, int ordinal) {
-        this.groupId = groupId;
-        this.codeId = codeId;
+    public CodeEntity(CodePK pk, String name, int ordinal) {
+        this.groupId = pk.getGroupId();
+        this.codeId = pk.getCodeId();
         this.name = name;
         this.ordinal = ordinal;
     }

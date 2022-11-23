@@ -58,8 +58,8 @@ public class TitleService implements ApplicationListener<ApplicationStartedEvent
     private void saveTitle(Title title, String defaultTitleKey) {
         if(title != null && StringUtils.isNotEmpty(title.value())) {
             String titleKey = StringUtils.defaultIfEmpty(title.titleKey(), defaultTitleKey);
-            TitleEntity titleEntity = new TitleEntity();
-            titleEntity.setId(titleRepository.generateId(titleKey));
+            String id = titleRepository.generateId(titleKey);
+            TitleEntity titleEntity = titleRepository.findById(id).orElse(new TitleEntity(id));
             titleEntity.setTitleKey(titleKey);
             titleEntity.setLang(Locale.getDefault().getLanguage());
             titleEntity.setCountry(Locale.getDefault().getCountry());
