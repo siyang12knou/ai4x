@@ -4,6 +4,7 @@ import com.kailoslab.ai4x.commons.utils.Constants;
 import com.kailoslab.ai4x.user.controller.UserController;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -20,6 +21,9 @@ public class UserSecurityConfig {
 
     private final AuthSuccessHandler authSuccessHandler;
     private final AuthFailureHandler authFailureHandler;
+
+    @Value("${server.servlet.session.cookie.name:JSESSIONID}")
+    private String sessionName;
 
     @Autowired(required = false)
     public UserSecurityConfig(AuthSuccessHandler authSuccessHandler, AuthFailureHandler authFailureHandler) {
@@ -55,7 +59,7 @@ public class UserSecurityConfig {
                         .successHandler(authSuccessHandler)
                         .failureHandler(authFailureHandler)
 
-                        .and().logout().logoutUrl("/logout").logoutSuccessUrl("/login").deleteCookies("JSESSIONID")
+                        .and().logout().logoutUrl("/logout").logoutSuccessUrl("/login").deleteCookies(sessionName)
 
                         .and().exceptionHandling().accessDeniedPage("/403")
 

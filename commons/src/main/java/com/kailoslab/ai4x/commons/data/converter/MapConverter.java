@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.kailoslab.ai4x.commons.utils.Constants;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
@@ -20,7 +21,7 @@ public class MapConverter implements AttributeConverter<Map<String, Object>, Str
 
     @Override
     public String convertToDatabaseColumn(Map jsonData) {
-        if(jsonData == null) {
+        if(jsonData == null || jsonData.isEmpty()) {
             return null;
         }
 
@@ -34,7 +35,7 @@ public class MapConverter implements AttributeConverter<Map<String, Object>, Str
 
     @Override
     public Map<String, Object> convertToEntityAttribute(String jsonString) {
-        if(jsonString == null) {
+        if(jsonString == null || StringUtils.isEmpty(jsonString)) {
             return null;
         }
 

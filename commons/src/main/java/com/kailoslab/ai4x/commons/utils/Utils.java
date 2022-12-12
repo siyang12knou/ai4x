@@ -1,5 +1,6 @@
 package com.kailoslab.ai4x.commons.utils;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import lombok.extern.slf4j.Slf4j;
@@ -102,11 +103,11 @@ public class Utils {
     }
 
     public static String toFirstLowerCase(String text) {
-        return Character.toLowerCase(text.charAt(0)) + text.length() > 1 ? text.substring(1) : "";
+        return Character.toLowerCase(text.charAt(0)) + (text.length() > 1 ? text.substring(1) : "");
     }
 
     public static String toFirstUpperCase(String text) {
-        return Character.toUpperCase(text.charAt(0)) + text.length() > 1 ? text.substring(1) : "";
+        return Character.toUpperCase(text.charAt(0)) + (text.length() > 1 ? text.substring(1) : "");
     }
 
     public static <T> T newInstance(Map<String, String> properties, Class<T> clazz) {
@@ -116,17 +117,32 @@ public class Utils {
 
         try {
             T instance = clazz.getDeclaredConstructor().newInstance();
-            Field[] fields = clazz.getFields();
+            Field[] fields = clazz.getDeclaredFields();
             Arrays.stream(fields).forEach(field -> {
-                String snakeName = Utils.camelToSnake(field.getName());
-                if(StringUtils.isNotEmpty(properties.get(snakeName))) {
+                JsonProperty jsonProperty = field.getDeclaredAnnotation(JsonProperty.class);
+                String keyName;
+                if(jsonProperty != null && StringUtils.isNotEmpty(jsonProperty.value())) {
+                    keyName = jsonProperty.value().toLowerCase();
+                } else {
+                    keyName = Utils.camelToSnake(field.getName());
+                }
+
+                if(StringUtils.isNotEmpty(properties.get(keyName))) {
                     try {
-                        Method setMethod = clazz.getMethod("set" + toFirstUpperCase(field.getName()));
-                        Class<?>[] params = setMethod.getParameterTypes();
-                        if(params.length == 1) {
-                            Method valueOf = params[0].getMethod("valueOf", String.class);
-                            setMethod.invoke(instance, valueOf.invoke(null, properties.get(snakeName)));
+                        Method getMethod = clazz.getMethod("get" + toFirstUpperCase(field.getName()));
+                        Class<?> paramType = getMethod.getReturnType();
+                        Method setMethod = clazz.getMethod("set" + toFirstUpperCase(field.getName()), paramType);
+                        Method valueOf = paramType.getMethod("valueOf", String.class);
+                        String paramValue = properties.get(keyName);
+                        if (paramType == Boolean.class) {
+                            if (StringUtils.equals(paramValue, "0")) {
+                                paramValue = "false";
+                            } else if (StringUtils.equals(paramValue, "1")) {
+                                paramValue = "true";
+                            }
                         }
+
+                        setMethod.invoke(instance, valueOf.invoke(null, paramValue));
                     } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException ignored) {}
                 }
             });
@@ -196,5 +212,27 @@ public class Utils {
         }
 
         return result;
+    }
+
+    public static boolean isAnyEmpty(Object ... objects) {
+        for (Object object :
+                objects) {
+            if (ObjectUtils.isEmpty(object)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public static boolean isAllEmpty(Object ... objects) {
+        for (Object object :
+                objects) {
+            if (ObjectUtils.isNotEmpty(object)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }
