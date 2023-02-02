@@ -1,13 +1,13 @@
 package com.kailoslab.ai4x.collector;
 
-import com.kailoslab.ai4x.commons.annotation.Help;
-import com.kailoslab.ai4x.commons.annotation.Title;
 import com.kailoslab.ai4x.batch.component.BatchService;
 import com.kailoslab.ai4x.batch.data.entity.BatchJobInfo;
 import com.kailoslab.ai4x.batch.exception.BatchException;
 import com.kailoslab.ai4x.collector.annotation.Close;
 import com.kailoslab.ai4x.collector.annotation.Collector;
 import com.kailoslab.ai4x.collector.annotation.Execute;
+import com.kailoslab.ai4x.commons.annotation.Help;
+import com.kailoslab.ai4x.commons.annotation.Title;
 import com.kailoslab.ai4x.commons.service.PropertiesService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
