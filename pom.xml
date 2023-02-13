@@ -14,7 +14,7 @@
         <module>batch</module>
         <module>collector</module>
         <module>logic</module>
-        <module>aws</module>
+        <module>py4spring</module>
         <module>mosquitto</module>
     </modules>
 
