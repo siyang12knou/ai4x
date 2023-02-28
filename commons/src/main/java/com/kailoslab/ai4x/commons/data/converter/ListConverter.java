@@ -6,8 +6,8 @@ import com.kailoslab.ai4x.commons.utils.Constants;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
-import javax.persistence.AttributeConverter;
-import javax.persistence.Converter;
+import jakarta.persistence.AttributeConverter;
+import jakarta.persistence.Converter;
 import java.util.ArrayList;
 import java.util.List;
 

@@ -1,0 +1,48 @@
+spring:
+  profiles:
+    group:
+      "local": "local-profile,common"
+      "prod": "prod-profile,common"
+
+---
+spring:
+  config:
+    activate:
+      on-profile: "common"
+  jpa:
+    database: mysql
+  jackson:
+    serialization:
+      fail-on-empty-beans: false
+  servlet:
+    multipart:
+      max-file-size: 550MB
+      max-request-size: 550MB
+
+ai4x:
+  py4spring:
+    enabled: true
+
+server:
+  servlet:
+    session:
+      cookie:
+        name: AI4XSESSION
+  port: 9090
+
+---
+spring:
+  config:
+    activate:
+      on-profile: "local-profile"
+
+logging:
+  config: classpath:logback-local.xml
+---
+spring:
+  config:
+    activate:
+      on-profile: "prod-profile"
+
+logging:
+  config: classpath:logback-prod.xml

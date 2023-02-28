@@ -2,7 +2,7 @@ package com.kailoslab.ai4x.commons.data.entity;
 
 import lombok.*;
 
-import javax.persistence.Embeddable;
+import jakarta.persistence.Embeddable;
 import java.io.Serializable;
 
 @NoArgsConstructor

@@ -13,6 +13,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Slf4j
 @Configuration
@@ -38,11 +39,7 @@ public class UserSecurityConfig {
 
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
-        return (web) -> web.ignoring().antMatchers(getIgnoringPath());
-    }
-
-    protected String[] getIgnoringPath() {
-        return new String[]{UserController.PATH};
+        return (web) -> web.ignoring().requestMatchers(new AntPathRequestMatcher(UserController.PATH));
     }
 
     @Bean
@@ -53,7 +50,7 @@ public class UserSecurityConfig {
     protected HttpSecurity setHttpSecurity(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests((auth) -> {
             try {
-                auth.antMatchers(Constants.PATH_API_PREFIX + "/**").authenticated().anyRequest().permitAll()
+                auth.requestMatchers(new AntPathRequestMatcher(Constants.PATH_API_PREFIX + "/**")).authenticated().anyRequest().permitAll()
 
                         .and().formLogin().loginPage("/login").loginProcessingUrl("/login")
                         .successHandler(authSuccessHandler)
