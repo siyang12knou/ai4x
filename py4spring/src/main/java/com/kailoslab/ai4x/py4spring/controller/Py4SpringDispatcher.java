@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.kailoslab.ai4x.py4spring.Py4SpringException;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.AntPathMatcher;
@@ -21,6 +22,7 @@ import java.util.concurrent.Future;
 
 import static org.springframework.http.converter.json.Jackson2ObjectMapperBuilder.json;
 
+@Slf4j
 public class Py4SpringDispatcher {
 
     @Value("${ai4x.py4spring.path:}")
@@ -91,8 +93,10 @@ public class Py4SpringDispatcher {
             try {
                 Info info = new Info(restFunction.getPath(), RequestMethod.valueOf(restFunction.getMethodName()));
                 restFunctionMap.put(info, restFunction);
+                log.info("Assigned a rest function({}#{}).", restFunction.getPath(), restFunction.getMethodName());
                 return true;
             } catch (Throwable ex) {
+                log.info("Cannot assign a rest function({}#{}).", restFunction.getPath(), restFunction.getMethodName());
                 return false;
             }
         });
@@ -106,9 +110,7 @@ public class Py4SpringDispatcher {
 
     public void unregisterRestFunction(String path, String methodName) {
         Info info = new Info(path, RequestMethod.valueOf(methodName));
-        if(restFunctionMap.containsKey(info)) {
-            restFunctionMap.remove(info);
-        }
+        restFunctionMap.remove(info);
     }
 
     private String getApiUri(HttpServletRequest request) {

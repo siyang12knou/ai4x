@@ -13,10 +13,7 @@ import org.springframework.cglib.proxy.Enhancer;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
-import py4j.GatewayServer;
-import py4j.GatewayServerListener;
-import py4j.Py4JNetworkException;
-import py4j.Py4JServerConnection;
+import py4j.*;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -25,6 +22,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.stream.Collectors;
 
 import static org.reflections.scanners.Scanners.TypesAnnotated;
 
@@ -96,7 +94,7 @@ public class Py4SpringService {
                 .entryPoint(this)
                 .javaAddress(javaAddress).javaPort(properties.getSpringPort())
                 .callbackClient(properties.getPythonPort(), pythonAddress)
-                .authToken(properties.getAuthToken())
+//                .authToken(properties.getAuthToken())
                 .build();
 
         gatewayServer.addListener(new Py4SpringGatewayServerListener());
@@ -106,13 +104,19 @@ public class Py4SpringService {
     }
 
     private void registerPythonContext0(IPythonContext pythonContext) {
-        if(pythonContext != null && applicationContext instanceof ConfigurableApplicationContext configurableApplicationContext) {
-            this.pythonContext = pythonContext;
-            executor.execute(() -> {
-                configurableApplicationContext.getBeanFactory().registerSingleton(pythonContext.getQualifier(), pythonContext);
-                pythonContext.setConnected(true);
-            });
+        try{
+            String qualifier = pythonContext.getQualifier();
+            if(applicationContext instanceof ConfigurableApplicationContext configurableApplicationContext) {
+                this.pythonContext = pythonContext;
+                executor.execute(() -> {
+                    configurableApplicationContext.getBeanFactory().registerSingleton(pythonContext.getQualifier(), pythonContext);
+                    pythonContext.setConnected(true);
+                });
+            }
+        } catch (Py4JException e) {
+            log.info("It is not yet connected with Python.");
         }
+
     }
 
     public List<String> getScanPackages(ApplicationContext applicationContext) {
@@ -209,33 +213,11 @@ public class Py4SpringService {
         }
 
         @Override
-        public List<String> registerBean(IPythonBeanWrapper beanWrapper) {
-            final List<String> classNames = beanWrapper.getClassNames();
-            Future<List<String>> result = executor.submit(() -> {
-                List<String> failedClassNames = new ArrayList<>(classNames.size());
-                classNames.forEach(className -> {
-                    PythonBeanInterceptor interceptor = interceptorMap.get(className);
-                    try {
-                        if (interceptor == null || !StringUtils.equals(interceptor.getClassName(), className)) {
-                            log.info("Cannot assign a bean({}) in interceptor.", className);
-                            failedClassNames.add(className);
-                        }
-
-                        assert interceptor != null;
-                        interceptor.setTarget(beanWrapper.getBean());
-                        log.info("Assigned a bean({}) in interceptor.", className);
-                    } catch (Throwable e) {
-                        log.error("Failed assign a bean({}) in interceptor.", className, e);
-                        failedClassNames.add(className);
-                    }
-                });
-                return failedClassNames;
-            });
-
+        public List<String> registerBean(IPythonBeanWrapper beanWrapper, List<String> classNames) {
+            Future<List<String>> result = executor.submit(() -> registerBeanSync(beanWrapper, classNames));
             try {
                 do {
                     Thread.sleep(10);
-                    log.info("{}", (result.isDone() || result.isCancelled()));
                 } while (!result.isDone() && !result.isCancelled());
 
                 if(result.isCancelled()) {
@@ -249,6 +231,28 @@ public class Py4SpringService {
         }
 
         @Override
+        public List<String> registerBeanSync(IPythonBeanWrapper beanWrapper, List<String> classNames) {
+            List<String> failedClassNames = new ArrayList<>();
+            classNames.forEach(className -> {
+                PythonBeanInterceptor interceptor = interceptorMap.get(className);
+                try {
+                    if (interceptor == null || !StringUtils.equals(interceptor.getClassName(), className)) {
+                        log.info("Cannot assign a bean({}) in interceptor.", className);
+                        failedClassNames.add(className);
+                    }
+
+                    assert interceptor != null;
+                    interceptor.setTarget(beanWrapper.getBean());
+                    log.info("Assigned a bean({}) in interceptor.", className);
+                } catch (Throwable e) {
+                    log.error("Failed assign a bean({}) in interceptor.", className, e);
+                    failedClassNames.add(className);
+                }
+            });
+            return failedClassNames;
+        }
+
+        @Override
         public void unregisterBean(List<String> classNames) {
             classNames.forEach(className -> {
                 PythonBeanInterceptor interceptor = interceptorMap.get(className);
@@ -256,6 +260,16 @@ public class Py4SpringService {
                     interceptor.setTarget(null);
                 }
             });
+        }
+
+        @Override
+        public Map<String, ?> getSpringSystemInfo() {
+            return System.getProperties().entrySet().stream().collect(
+                Collectors.toMap(
+                    e -> String.valueOf(e.getKey()),
+                    e -> String.valueOf(e.getValue()),
+                    (prev, next) -> next, HashMap::new
+                ));
         }
     }
 
