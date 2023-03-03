@@ -16,10 +16,9 @@ public class Py4SpringRestController {
     private final Py4SpringService py4SpringService;
 
     @RequestMapping(value="/**", method = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE})
-    public ResultMessageDto dispatch(HttpServletRequest request, @RequestBody(required=false) String body){
+    public Object dispatch(HttpServletRequest request, @RequestBody(required=false) String body){
         try {
-            Object data = py4SpringService.getDispatcher().dispatch(request, body);
-            return new ResultMessageDto(data);
+            return py4SpringService.getDispatcher().dispatch(request, body);
         } catch (Throwable ex) {
             return new ResultMessageDto(false, ex.getMessage());
         }
