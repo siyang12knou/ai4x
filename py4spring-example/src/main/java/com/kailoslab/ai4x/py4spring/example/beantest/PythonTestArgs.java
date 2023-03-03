@@ -1,4 +1,4 @@
-package com.kailoslab.ai4x.app.beantest;
+package com.kailoslab.ai4x.py4spring.example.beantest;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

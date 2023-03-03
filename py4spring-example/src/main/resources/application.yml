@@ -3,6 +3,7 @@ spring:
     group:
       "local": "local-profile,common"
       "prod": "prod-profile,common"
+    default: "prod"
 
 ---
 spring:
@@ -18,10 +19,8 @@ spring:
     multipart:
       max-file-size: 550MB
       max-request-size: 550MB
-
-ai4x:
-  py4spring:
-    enabled: true
+  lifecycle:
+    timeout-per-shutdown-phase: 35s
 
 server:
   servlet:

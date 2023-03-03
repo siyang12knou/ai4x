@@ -1,13 +1,13 @@
-package com.kailoslab.ai4x.app;
+package com.kailoslab.ai4x.py4spring.example;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class Ai4xApplication {
+public class Py4SpringExampleApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(Ai4xApplication.class, args);
+        SpringApplication.run(Py4SpringExampleApplication.class, args);
     }
 
 }

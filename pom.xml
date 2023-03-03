@@ -16,7 +16,6 @@
         <module>logic</module>
         <module>py4spring</module>
         <module>mosquitto</module>
-        <module>app</module>
     </modules>
 
 </project>

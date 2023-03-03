@@ -89,17 +89,7 @@ public class Py4SpringDispatcher {
     }
 
     public Boolean registerRestFunction(IPythonRestFunction restFunction) {
-        Future<Boolean> result = executor.submit(() -> {
-            try {
-                Info info = new Info(restFunction.getPath(), RequestMethod.valueOf(restFunction.getMethodName()));
-                restFunctionMap.put(info, restFunction);
-                log.info("Assigned a rest function({}#{}).", restFunction.getPath(), restFunction.getMethodName());
-                return true;
-            } catch (Throwable ex) {
-                log.info("Cannot assign a rest function({}#{}).", restFunction.getPath(), restFunction.getMethodName());
-                return false;
-            }
-        });
+        Future<Boolean> result = executor.submit(() -> registerRestFunctionSync(restFunction));
 
         try {
             return result.get();
@@ -108,9 +98,25 @@ public class Py4SpringDispatcher {
         }
     }
 
+    public Boolean registerRestFunctionSync(IPythonRestFunction restFunction) {
+        try {
+            Info info = new Info(restFunction.getPath(), RequestMethod.valueOf(restFunction.getMethodName()));
+            restFunctionMap.put(info, restFunction);
+            log.info("Assigned a rest function({}#{}).", restFunction.getPath(), restFunction.getMethodName());
+            return true;
+        } catch (Throwable ex) {
+            log.info("Cannot assign a rest function({}#{}).", restFunction.getPath(), restFunction.getMethodName());
+            return false;
+        }
+    }
+
     public void unregisterRestFunction(String path, String methodName) {
         Info info = new Info(path, RequestMethod.valueOf(methodName));
         restFunctionMap.remove(info);
+    }
+
+    public void clearRestFunctionList() {
+        restFunctionMap.clear();
     }
 
     private String getApiUri(HttpServletRequest request) {

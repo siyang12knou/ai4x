@@ -6,10 +6,10 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "ai4x.py4spring")
 @Setter
 public class Py4SpringProperties {
-    public final String DEFAULT_ADDRESS_NAME = "127.0.0.1";
-    public final int DEFAULT_SPRING_PORT = 25333;
-    public final int DEFAULT_PYTHON_PORT = 25334;
-    public final String DEFAULT_AUTH_TOKEN = "py4spring";
+    public static final String DEFAULT_ADDRESS_NAME = "127.0.0.1";
+    public static final int DEFAULT_SPRING_PORT = 25333;
+    public static final int DEFAULT_PYTHON_PORT = 25334;
+    public static final String DEFAULT_AUTH_TOKEN = "py4spring";
 
     private String springAddressName;
     private String pythonAddressName;

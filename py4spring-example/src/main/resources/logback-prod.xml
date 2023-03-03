@@ -7,11 +7,11 @@
 
     <appender name="Console"
               class="ch.qos.logback.core.ConsoleAppender">
-        <layout class="ch.qos.logback.classic.PatternLayout">
+        <encoder  class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
             <Pattern>
                 [%d{yyyy-MM-dd HH:mm:ss}:%-3relative][%thread] %-5level %logger{35} - %msg%n
             </Pattern>
-        </layout>
+        </encoder >
     </appender>
 
     <appender name="RollingFile"

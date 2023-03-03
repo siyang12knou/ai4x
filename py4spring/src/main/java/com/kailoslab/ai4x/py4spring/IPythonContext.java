@@ -8,5 +8,4 @@ public interface IPythonContext {
     void setConnected(Boolean connected);
     Map<String, String> getPythonSystemInfo();
     List<String> getPackagesInfo();
-    void fireSpringShutdownEvent();
 }

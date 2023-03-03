@@ -9,10 +9,10 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.kailoslab.ai4x</groupId>
-    <artifactId>app</artifactId>
+    <artifactId>py4spring-example</artifactId>
     <version>1.0.0</version>
-    <name>Ai4xApp</name>
-    <description>Ai4xApp</description>
+    <name>Py4Spring-Example</name>
+    <description>Py4Spring-Example</description>
     <properties>
         <java.version>17</java.version>
     </properties>
@@ -27,6 +27,11 @@
             <version>${project.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-properties-migrator</artifactId>
+            <scope>runtime</scope>
+        </dependency>
         <dependency>
             <groupId>com.mysql</groupId>
             <artifactId>mysql-connector-j</artifactId>

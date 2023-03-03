@@ -1,4 +1,4 @@
-package com.kailoslab.ai4x.app;
+package com.kailoslab.ai4x.py4spring.example;
 
 import com.kailoslab.ai4x.py4spring.Py4SpringConfiguration;
 import com.kailoslab.ai4x.py4spring.controller.Py4SpringDispatcher;
@@ -10,10 +10,10 @@ import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
 @SpringBootTest
-class Ai4xApplicationTests {
+class Py4SpringExampleApplicationTests {
 
     private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-            .withConfiguration(AutoConfigurations.of(Ai4xApplication.class));
+            .withConfiguration(AutoConfigurations.of(Py4SpringExampleApplication.class));
 
     @Test
     void contextLoads() {

@@ -6,14 +6,20 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.reflections.Reflections;
+import org.reflections.util.ConfigurationBuilder;
 import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.support.BeanDefinitionRegistry;
+import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.cglib.proxy.Enhancer;
+import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationListener;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
-import py4j.*;
+import org.springframework.util.ClassUtils;
+import py4j.GatewayServer;
+import py4j.Py4JException;
+import py4j.Py4JNetworkException;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -27,7 +33,7 @@ import java.util.stream.Collectors;
 import static org.reflections.scanners.Scanners.TypesAnnotated;
 
 @Slf4j
-public class Py4SpringService {
+public class Py4SpringService implements BeanFactoryPostProcessor, ApplicationListener<ApplicationStartedEvent> {
 
     private final ApplicationContext applicationContext;
     @Getter
@@ -36,51 +42,41 @@ public class Py4SpringService {
     private final Py4SpringDispatcher dispatcher;
     @Getter
     private final Py4Utils utils;
-    private final Map<String, PythonBeanInterceptor> interceptorMap;
+    private final Py4SpringPythonProxyRepository proxyRepository;
+    private final Py4SpringProperties properties;
 
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
     private IPythonContext pythonContext;
     private GatewayServer gatewayServer;
 
-    public Py4SpringService(ApplicationContext applicationContext, Py4SpringDispatcher dispatcher, Py4SpringProperties properties) {
+    public Py4SpringService(ApplicationContext applicationContext, Py4SpringDispatcher dispatcher, Py4SpringProperties properties, Py4SpringPythonProxyRepository proxyRepository) {
         this.applicationContext = applicationContext;
         this.dispatcher = dispatcher;
         this.context = new Py4SpringContext();
         this.utils = new Py4Utils();
-        this.interceptorMap = Collections.synchronizedMap(new HashMap<>());
-        initPythonBeans();
-        initGateway(properties);
+        this.proxyRepository = proxyRepository;
+        this.properties = properties;
     }
 
-    private void initPythonBeans() {
-        if(applicationContext instanceof ConfigurableApplicationContext configurableApplicationContext) {
-            List<String> scanPackages = getScanPackages(applicationContext);
-            scanPackages.forEach(scanPackage -> {
-                Reflections reflections = new Reflections(scanPackage, TypesAnnotated);
-                Set<Class<?>> classSet = reflections.getTypesAnnotatedWith(PythonBean.class);
-                classSet.forEach(clazz -> {
-                    if(!interceptorMap.containsKey(clazz.getName())) {
-                        PythonBean pythonBean = clazz.getDeclaredAnnotation(PythonBean.class);
-                        String qualifier = pythonBean.value();
-                        if (StringUtils.isEmpty(qualifier)) {
-                            qualifier = convertClassNameToQualifier(clazz.getSimpleName());
-                        }
-
-                        Enhancer enhancer = new Enhancer();
-                        enhancer.setSuperclass(clazz);
-                        PythonBeanInterceptor interceptor = new PythonBeanInterceptor(clazz.getName());
-                        enhancer.setCallback(interceptor);
-                        Object bean = enhancer.create();
-                        configurableApplicationContext.getBeanFactory().registerSingleton(qualifier, bean);
-                        interceptorMap.put(clazz.getName(), interceptor);
-                    }
-                });
+    @Override
+    public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
+        List<String> scanPackages = getScanPackages(applicationContext);
+        scanPackages.forEach(scanPackage -> {
+            Reflections reflections = new Reflections(new ConfigurationBuilder().forPackages(scanPackage).setScanners(TypesAnnotated));
+            Set<Class<?>> classSet = reflections.getTypesAnnotatedWith(PythonProxy.class);
+            classSet.forEach(clazz -> {
+                String shortName = ClassUtils.getShortNameAsProperty(clazz);
+                if(!beanFactory.containsBean(shortName)) {
+                    beanFactory.registerSingleton(shortName, proxyRepository.createPythonProxy(clazz));
+                    log.info("register a PythonBeanInterceptor for " + clazz);
+                }
             });
-        }
+        });
     }
 
-    private void initGateway(Py4SpringProperties properties) {
+    @Override
+    public void onApplicationEvent(ApplicationStartedEvent event) {
         InetAddress javaAddress;
         InetAddress pythonAddress;
         try {
@@ -97,7 +93,6 @@ public class Py4SpringService {
 //                .authToken(properties.getAuthToken())
                 .build();
 
-        gatewayServer.addListener(new Py4SpringGatewayServerListener());
         gatewayServer.start();
         log.info("Started a gateway server for Py4SpringService.");
         registerPythonContext0((IPythonContext) gatewayServer.getPythonServerEntryPoint(new Class[] {IPythonContext.class}));
@@ -105,12 +100,23 @@ public class Py4SpringService {
 
     private void registerPythonContext0(IPythonContext pythonContext) {
         try{
-            String qualifier = pythonContext.getQualifier();
             if(applicationContext instanceof ConfigurableApplicationContext configurableApplicationContext) {
                 this.pythonContext = pythonContext;
+                this.dispatcher.clearRestFunctionList();
                 executor.execute(() -> {
-                    configurableApplicationContext.getBeanFactory().registerSingleton(pythonContext.getQualifier(), pythonContext);
-                    pythonContext.setConnected(true);
+                    try {
+                        pythonContext.setConnected(true);
+                        log.info("Connected a py4spring of python.");
+                    } catch(Py4JException e) {
+                        try {
+                            Thread.sleep(2000);
+                            pythonContext.setConnected(true);
+                            log.info("Connected a py4spring of python.");
+                        } catch (InterruptedException ex) {
+                            log.info("Cannot connect a py4spring of python.");
+                        }
+
+                    }
                 });
             }
         } catch (Py4JException e) {
@@ -146,23 +152,9 @@ public class Py4SpringService {
         return scanPackages;
     }
 
-    private String convertClassNameToQualifier(String className) {
-        String qualifier = className;
-        if (qualifier.length() > 2 &&
-                StringUtils.isAllUpperCase(qualifier.substring(0, 2)) &&
-                qualifier.startsWith("I")) {
-            qualifier = qualifier.substring(1);
-        }
-
-        return Character.toLowerCase(qualifier.charAt(0)) + (qualifier.length() > 1 ? qualifier.substring(1) : "");
-    }
-
     @PreDestroy
     public void shutdown() {
         if(pythonContext != null) {
-            if(applicationContext instanceof ConfigurableApplicationContext configurableApplicationContext) {
-                ((BeanDefinitionRegistry) configurableApplicationContext.getBeanFactory()).removeBeanDefinition(pythonContext.getQualifier());
-            }
             pythonContext.setConnected(false);
             pythonContext = null;
         }
@@ -181,11 +173,11 @@ public class Py4SpringService {
         }
 
         @Override
-        public Object getBean(String className) {
+        public Object getBean(String qualifier) {
             try {
-                return applicationContext.getBean(className);
+                return applicationContext.getBean(qualifier);
             } catch (BeansException e) {
-                log.error("Cannot find a bean: " + className);
+                log.error("Cannot find a bean: " + qualifier);
                 return null;
             }
         }
@@ -234,7 +226,7 @@ public class Py4SpringService {
         public List<String> registerBeanSync(IPythonBeanWrapper beanWrapper, List<String> classNames) {
             List<String> failedClassNames = new ArrayList<>();
             classNames.forEach(className -> {
-                PythonBeanInterceptor interceptor = interceptorMap.get(className);
+                PythonBeanInterceptor interceptor = proxyRepository.getInterceptor(className);
                 try {
                     if (interceptor == null || !StringUtils.equals(interceptor.getClassName(), className)) {
                         log.info("Cannot assign a bean({}) in interceptor.", className);
@@ -255,7 +247,7 @@ public class Py4SpringService {
         @Override
         public void unregisterBean(List<String> classNames) {
             classNames.forEach(className -> {
-                PythonBeanInterceptor interceptor = interceptorMap.get(className);
+                PythonBeanInterceptor interceptor = proxyRepository.getInterceptor(className);
                 if(interceptor != null) {
                     interceptor.setTarget(null);
                 }
@@ -270,49 +262,6 @@ public class Py4SpringService {
                     e -> String.valueOf(e.getValue()),
                     (prev, next) -> next, HashMap::new
                 ));
-        }
-    }
-
-    class Py4SpringGatewayServerListener implements GatewayServerListener {
-
-        @Override
-        public void connectionError(Exception e) {
-
-        }
-
-        @Override
-        public void connectionStarted(Py4JServerConnection gatewayConnection) {
-
-        }
-
-        @Override
-        public void connectionStopped(Py4JServerConnection gatewayConnection) {
-
-        }
-
-        @Override
-        public void serverError(Exception e) {
-
-        }
-
-        @Override
-        public void serverPostShutdown() {
-
-        }
-
-        @Override
-        public void serverPreShutdown() {
-
-        }
-
-        @Override
-        public void serverStarted() {
-
-        }
-
-        @Override
-        public void serverStopped() {
-
         }
     }
 }
