@@ -90,7 +90,6 @@ public class Py4SpringService implements BeanFactoryPostProcessor, ApplicationLi
                 .entryPoint(this)
                 .javaAddress(javaAddress).javaPort(properties.getSpringPort())
                 .callbackClient(properties.getPythonPort(), pythonAddress)
-//                .authToken(properties.getAuthToken())
                 .build();
 
         gatewayServer.start();
@@ -108,14 +107,7 @@ public class Py4SpringService implements BeanFactoryPostProcessor, ApplicationLi
                         pythonContext.setConnected(true);
                         log.info("Connected a py4spring of python.");
                     } catch(Py4JException e) {
-                        try {
-                            Thread.sleep(2000);
-                            pythonContext.setConnected(true);
-                            log.info("Connected a py4spring of python.");
-                        } catch (InterruptedException ex) {
-                            log.info("Cannot connect a py4spring of python.");
-                        }
-
+                        log.error("Cannot connect a py4spring of python.", e);
                     }
                 });
             }

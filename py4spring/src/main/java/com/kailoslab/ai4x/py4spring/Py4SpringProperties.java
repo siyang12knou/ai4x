@@ -9,7 +9,6 @@ public class Py4SpringProperties {
     public static final String DEFAULT_ADDRESS_NAME = "127.0.0.1";
     public static final int DEFAULT_SPRING_PORT = 25333;
     public static final int DEFAULT_PYTHON_PORT = 25334;
-    public static final String DEFAULT_AUTH_TOKEN = "py4spring";
 
     private String springAddressName;
     private String pythonAddressName;
@@ -31,9 +30,5 @@ public class Py4SpringProperties {
 
     public Integer getPythonPort() {
         return pythonPort == null ? DEFAULT_PYTHON_PORT : pythonPort;
-    }
-
-    public String getAuthToken() {
-        return authToken == null ? DEFAULT_AUTH_TOKEN : authToken;
     }
 }
