@@ -6,7 +6,7 @@ import java.util.Map;
 public interface IPy4SpringContext {
     void registerPythonContext(IPythonContext pythonContext);
     Object getBean(String qualifier);
-    Object getBeanOfType(String className);
+    Object getBeanByClassName(String className);
     Object getBean(String className, String qualifier);
     List<String> registerBean(IPythonBeanWrapper beanWrapper, List<String> classNames);
     List<String> registerBeanSync(IPythonBeanWrapper beanWrapper, List<String> classNames);

@@ -107,14 +107,13 @@ public class Py4SpringService implements BeanFactoryPostProcessor, ApplicationLi
                         pythonContext.setConnected(true);
                         log.info("Connected a py4spring of python.");
                     } catch(Py4JException e) {
-                        log.error("Cannot connect a py4spring of python.", e);
+                        log.error("Cannot connect a py4spring of python.");
                     }
                 });
             }
         } catch (Py4JException e) {
             log.info("It is not yet connected with Python.");
         }
-
     }
 
     public List<String> getScanPackages(ApplicationContext applicationContext) {
@@ -175,7 +174,7 @@ public class Py4SpringService implements BeanFactoryPostProcessor, ApplicationLi
         }
 
         @Override
-        public Object getBeanOfType(String className) {
+        public Object getBeanByClassName(String className) {
             try {
                 Class<?> clazz = Class.forName(className);
                 return applicationContext.getBean(clazz);
