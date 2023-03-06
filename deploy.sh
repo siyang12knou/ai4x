@@ -1,7 +1,6 @@
 # Local Maven Repository 경로
 local_occidere_maven_repo='../kailoslab_m2'
-mvn deploy -DskipTests=true -DaltDeploymentRepository=releases-repo::default::file:${local_occidere_maven_repo}/releases
-mvn deploy -DskipTests=true -DaltDeploymentRepository=releases-repo::default::file:${local_occidere_maven_repo}/releases
+mvn clean deploy -DskipTests=true -DaltDeploymentRepository=releases-repo::default::file:${local_occidere_maven_repo}/releases
 # Local Maven Repository로 이동
 # shellcheck disable=SC2164
 cd ${local_occidere_maven_repo}
