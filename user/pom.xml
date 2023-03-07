@@ -15,7 +15,9 @@
     <description>user</description>
     <properties>
         <java.version>17</java.version>
-        <nexus.url>http://192.168.0.4:8081/repository/maven-releases/</nexus.url>
+        <nexus.url>http://192.168.0.4:8081/repository</nexus.url>
+        <nexus.releases>${nexus.url}/maven-releases/</nexus.releases>
+        <nexus.public>${nexus.url}/maven-public/</nexus.public>
     </properties>
 
     <dependencies>
@@ -38,10 +40,17 @@
         </dependency>
     </dependencies>
 
+    <repositories>
+        <repository>
+            <id>maven-public</id>
+            <url>${nexus.public}</url>
+        </repository>
+    </repositories>
+
     <distributionManagement>
         <repository>
             <id>maven-releases</id>
-            <url>${nexus.url}</url>
+            <url>${nexus.releases}</url>
         </repository>
     </distributionManagement>
 
@@ -62,7 +71,7 @@
                 </executions>
                 <configuration>
                     <serverId>maven-releases</serverId>
-                    <nexusUrl>${nexus.url}</nexusUrl>
+                    <nexusUrl>${nexus.releases}</nexusUrl>
                     <skipStaging>true</skipStaging>
                 </configuration>
             </plugin>
