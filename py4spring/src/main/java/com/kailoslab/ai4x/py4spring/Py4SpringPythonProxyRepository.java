@@ -1,11 +1,17 @@
 package com.kailoslab.ai4x.py4spring;
 
+import com.kailoslab.ai4x.java2python.Java2PythonConverter;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cglib.proxy.Enhancer;
+import org.springframework.context.ApplicationContext;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.Executor;
 
 @Slf4j
 public class Py4SpringPythonProxyRepository {
@@ -15,10 +21,32 @@ public class Py4SpringPythonProxyRepository {
 
     private final Map<String, PythonBeanInterceptor> interceptorMap;
     private final Map<String, Object> proxyMap;
+    private final Py4SpringProperties properties;
+    private final Executor executor;
+    private final Java2PythonConverter pythonConverter;
 
-    public Py4SpringPythonProxyRepository() {
+    public Py4SpringPythonProxyRepository(ApplicationContext applicationContext, Py4SpringProperties properties, Executor executor) {
+        this.properties = properties;
+        this.executor = executor;
         this.interceptorMap = Collections.synchronizedMap(new HashMap<>());
         this.proxyMap = Collections.synchronizedMap(new HashMap<>());
+        this.pythonConverter = new Java2PythonConverter();
+        if(StringUtils.isNotEmpty(properties.getPythonDirectory())) {
+            this.pythonConverter.setPythonSrcPath(properties.getPythonDirectory());
+        }
+
+        Optional appBeanOption = applicationContext.getBeansWithAnnotation(SpringBootApplication.class).values().stream().findFirst();
+        if(appBeanOption.isPresent()) {
+            String moduleName = appBeanOption.get().getClass().getPackageName();
+            if (StringUtils.isNotEmpty(moduleName)) {
+                if (StringUtils.contains(moduleName, ".")) {
+                    moduleName = StringUtils.substringAfterLast(moduleName, ".");
+                }
+
+                this.pythonConverter.setPythonModuleName(moduleName);
+            }
+            // set default module name
+        }
     }
 
     public Object createPythonProxy(Class clazz) {
@@ -32,6 +60,9 @@ public class Py4SpringPythonProxyRepository {
             bean = enhancer.create();
             interceptorMap.put(className, interceptor);
             proxyMap.put(className, bean);
+            if(properties.isConvert()) {
+                createPythonCode(clazz);
+            }
 
         }
         return bean;
@@ -45,4 +76,9 @@ public class Py4SpringPythonProxyRepository {
         return proxyMap.containsKey(className);
     }
 
+    private void createPythonCode(Class clazz) {
+        if(properties.isConvert()) {
+            executor.execute(() -> pythonConverter.convert(clazz));
+        }
+    }
 }

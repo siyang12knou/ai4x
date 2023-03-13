@@ -9,6 +9,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
+import java.util.concurrent.Executor;
+
 import static com.kailoslab.ai4x.py4spring.Py4SpringPythonProxyRepository.PYTHON_PROXY_REPOSITORY;
 
 @Configuration
@@ -24,14 +26,14 @@ public class Py4SpringConfiguration {
     }
 
     @Bean(PYTHON_PROXY_REPOSITORY)
-    public Py4SpringPythonProxyRepository py4SpringPythonProxyRepository() {
+    public Py4SpringPythonProxyRepository py4SpringPythonProxyRepository(ApplicationContext applicationContext, Py4SpringProperties properties, Executor executor) {
         log.info("register py4SpringPythonProxyRepository");
-        return new Py4SpringPythonProxyRepository();
+        return new Py4SpringPythonProxyRepository(applicationContext, properties, executor);
     }
 
     @Bean
-    public Py4SpringService py4SpringService(ApplicationContext applicationContext, Py4SpringProperties properties) {
+    public Py4SpringService py4SpringService(ApplicationContext applicationContext, Py4SpringProperties properties, Executor executor) {
         log.info("register py4SpringService");
-        return new Py4SpringService(applicationContext, py4SpringDispatcher(), properties, py4SpringPythonProxyRepository());
+        return new Py4SpringService(applicationContext, py4SpringDispatcher(), properties, py4SpringPythonProxyRepository(applicationContext, properties, executor));
     }
 }

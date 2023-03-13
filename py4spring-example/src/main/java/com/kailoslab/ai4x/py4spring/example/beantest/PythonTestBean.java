@@ -6,7 +6,7 @@ import java.util.Map;
 
 @PythonProxy
 public interface PythonTestBean {
-
+    String name = "testBean";
     Map<String, Object> test(PythonTestArgs arg);
 
 }

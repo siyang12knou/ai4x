@@ -16,6 +16,7 @@
         <module>logic</module>
         <module>py4spring</module>
         <module>mosquitto</module>
+        <module>java2python</module>
     </modules>
 
 </project>
