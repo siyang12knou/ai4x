@@ -1,13 +1,13 @@
 package com.kailoslab.ai4x.commons.data.entity;
 
 import com.kailoslab.ai4x.commons.data.converter.MapConverter;
-import com.kailoslab.ai4x.commons.utils.Constants;
+import com.kailoslab.ai4x.utils.Constants;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import jakarta.persistence.*;
 import java.util.Map;
 
 @AllArgsConstructor

@@ -2,13 +2,12 @@ package com.kailoslab.ai4x.commons.data.entity;
 
 import com.kailoslab.ai4x.commons.code.Action;
 import com.kailoslab.ai4x.commons.code.Level;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.annotation.CreatedDate;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 
 @NoArgsConstructor
@@ -19,11 +18,14 @@ import java.time.LocalDateTime;
 public class Log {
     @Id
     private Long id;
+    @Enumerated(EnumType.STRING)
     private Level level;
+    @Enumerated(EnumType.STRING)
     private Action action;
     private String message;
     private String userId;
     private String data;
+    @CreatedDate
     private LocalDateTime createdDate;
 
     public Log(Level level, Action action, String message, String userId, LocalDateTime createdDate) {
