@@ -1,0 +1,2 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  com.kailoslab.ai4x.event.stomp.StompPropertiesConfig

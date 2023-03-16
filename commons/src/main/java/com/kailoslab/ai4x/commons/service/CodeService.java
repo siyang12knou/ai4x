@@ -5,8 +5,8 @@ import com.kailoslab.ai4x.commons.annotation.Title;
 import com.kailoslab.ai4x.commons.data.CodeRepository;
 import com.kailoslab.ai4x.commons.data.entity.CodeEntity;
 import com.kailoslab.ai4x.commons.data.entity.CodePK;
-import com.kailoslab.ai4x.commons.utils.Constants;
-import com.kailoslab.ai4x.commons.utils.Utils;
+import com.kailoslab.ai4x.utils.Ai4xUtils;
+import com.kailoslab.ai4x.utils.Constants;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.reflections.Reflections;
@@ -30,7 +30,7 @@ public class CodeService implements ApplicationListener<ApplicationStartedEvent>
 
     @Override
     public void onApplicationEvent(ApplicationStartedEvent event) {
-        List<String> scanPackages = Utils.getScanPackages(applicationContext);
+        List<String> scanPackages = Ai4xUtils.getScanPackages(applicationContext);
         scanPackages.forEach(scanPackage -> {
             Reflections reflections = new Reflections(scanPackage,
                     TypesAnnotated);
@@ -49,16 +49,16 @@ public class CodeService implements ApplicationListener<ApplicationStartedEvent>
     }
 
     public void saveCode(CodeGroup codeGroup, Class<?> codeGroupClass) {
-        String codeGroupId = StringUtils.isNotEmpty(codeGroup.value()) ? codeGroup.value() : Utils.toFirstLowerCase(codeGroupClass.getSimpleName());
+        String codeGroupId = StringUtils.isNotEmpty(codeGroup.value()) ? codeGroup.value() : Ai4xUtils.toFirstLowerCase(codeGroupClass.getSimpleName());
         CodePK pk = new CodePK(Constants.DEFAULT_GROUP_ID, codeGroupId);
         CodeEntity codeGroupEntity = codeRepository.findById(pk).orElse(new CodeEntity(pk));
         codeGroupEntity.setName(getTitle(codeGroupClass));
         saveCode(codeGroupEntity);
         for(Object code: codeGroupClass.getEnumConstants()) {
-            String id = Utils.getString(code, "name");
+            String id = Ai4xUtils.getString(code, "name");
             String name = getTitle(codeGroupClass, code);
             if(!StringUtils.isAnyEmpty(id, name)) {
-                int ordinal = Utils.getInt(code, "ordinal");
+                int ordinal = Ai4xUtils.getInt(code, "ordinal");
                 pk = new CodePK(codeGroupId, id);
                 CodeEntity codeEntity = codeRepository.findById(pk).orElse(new CodeEntity(pk));
                 codeEntity.setName(name);
@@ -80,13 +80,13 @@ public class CodeService implements ApplicationListener<ApplicationStartedEvent>
 
     private String getTitle(Class<?> codeGroupClass, Object code) {
         try {
-            String codeId = Utils.getString(code, "name");
+            String codeId = Ai4xUtils.getString(code, "name");
             Field field = codeGroupClass.getField(codeId);
             Title title = field.getAnnotation(Title.class);
             return title == null || StringUtils.isEmpty(title.value()) ?
-                    Utils.getString(code, "getName", "name") : title.value();
+                    Ai4xUtils.getString(code, "getName", "name") : title.value();
         } catch (NoSuchFieldException e) {
-            return Utils.getString(code, "getName", "name");
+            return Ai4xUtils.getString(code, "getName", "name");
         }
     }
 }

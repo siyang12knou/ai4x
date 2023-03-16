@@ -1,0 +1,3 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  com.kailoslab.ai4x.commons.config.AsyncConfig\
+  com.kailoslab.ai4x.commons.config.JasyptConfig,

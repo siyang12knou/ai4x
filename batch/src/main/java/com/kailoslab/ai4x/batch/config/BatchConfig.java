@@ -1,6 +1,6 @@
 package com.kailoslab.ai4x.batch.config;
 
-import com.kailoslab.ai4x.commons.utils.Utils;
+import com.kailoslab.ai4x.utils.Ai4xUtils;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -36,8 +36,8 @@ public class BatchConfig {
         Properties properties = new Properties();
         if(quartzProperties.getProperties().isEmpty()) {
             try {
-                properties = Utils.loadYaml(new ClassPathResource(SCHEDULER_YML));
-                quartzProperties.getProperties().putAll(Utils.convert(properties));
+                properties = Ai4xUtils.loadYaml(new ClassPathResource(SCHEDULER_YML));
+                quartzProperties.getProperties().putAll(Ai4xUtils.convert(properties));
             } catch (IOException e) {
                 log.error("Cannot find %s".formatted(SCHEDULER_YML), e);
             }

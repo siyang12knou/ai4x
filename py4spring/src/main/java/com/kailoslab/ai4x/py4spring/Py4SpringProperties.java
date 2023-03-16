@@ -3,7 +3,7 @@ package com.kailoslab.ai4x.py4spring;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-@ConfigurationProperties(prefix = "py4spring")
+@ConfigurationProperties(prefix = "ai4x.py4spring")
 @Setter
 public class Py4SpringProperties {
     public static final String DEFAULT_ADDRESS_NAME = "127.0.0.1";

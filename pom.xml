@@ -9,14 +9,19 @@
     <packaging>pom</packaging>
 
     <modules>
+        <module>utils</module>
         <module>commons</module>
+        <module>alarm</module>
+        <module>event</module>
         <module>user</module>
         <module>batch</module>
         <module>collector</module>
         <module>logic</module>
+        <module>java2python</module>
         <module>py4spring</module>
         <module>mosquitto</module>
-        <module>java2python</module>
+        <module>docker</module>
+        <module>drive</module>
     </modules>
 
 </project>

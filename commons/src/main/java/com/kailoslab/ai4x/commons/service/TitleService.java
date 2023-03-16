@@ -3,7 +3,7 @@ package com.kailoslab.ai4x.commons.service;
 import com.kailoslab.ai4x.commons.annotation.Title;
 import com.kailoslab.ai4x.commons.data.TitleRepository;
 import com.kailoslab.ai4x.commons.data.entity.TitleEntity;
-import com.kailoslab.ai4x.commons.utils.Utils;
+import com.kailoslab.ai4x.utils.Ai4xUtils;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.reflections.Reflections;
@@ -15,8 +15,6 @@ import org.springframework.stereotype.Service;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 import static org.reflections.scanners.Scanners.*;
 
@@ -29,28 +27,28 @@ public class TitleService implements ApplicationListener<ApplicationStartedEvent
 
     @Override
     public void onApplicationEvent(ApplicationStartedEvent event) {
-        List<String> scanPackages = Utils.getScanPackages(applicationContext);
+        List<String> scanPackages = Ai4xUtils.getScanPackages(applicationContext);
         scanPackages.forEach(scanPackage -> {
             Reflections reflections = new Reflections(scanPackage,
                     TypesAnnotated, FieldsAnnotated, MethodsAnnotated );
             Set<Class<?>> classSet = reflections.getTypesAnnotatedWith(Title.class);
             classSet.forEach(clazz -> {
                 Title title = clazz.getDeclaredAnnotation(Title.class);
-                saveTitle(title, Utils.toFirstLowerCase(clazz.getSimpleName()));
+                saveTitle(title, Ai4xUtils.toFirstLowerCase(clazz.getSimpleName()));
             });
 
             Set<Field> fieldSet = reflections.getFieldsAnnotatedWith(Title.class);
             fieldSet.forEach(field -> {
                 Title title = field.getDeclaredAnnotation(Title.class);
                 Class<?> type = field.getType();
-                saveTitle(title, Utils.toFirstLowerCase(type.getSimpleName()) + "." +Utils.toFirstLowerCase(field.getName()));
+                saveTitle(title, Ai4xUtils.toFirstLowerCase(type.getSimpleName()) + "." + Ai4xUtils.toFirstLowerCase(field.getName()));
             });
 
             Set<Method> methodSet = reflections.getMethodsAnnotatedWith(Title.class);
             methodSet.forEach(method -> {
                 Title title = method.getDeclaredAnnotation(Title.class);
                 Class<?> type = method.getDeclaringClass();
-                saveTitle(title, Utils.toFirstLowerCase(type.getSimpleName()) + "." +Utils.toFirstLowerCase(method.getName()));
+                saveTitle(title, Ai4xUtils.toFirstLowerCase(type.getSimpleName()) + "." + Ai4xUtils.toFirstLowerCase(method.getName()));
             });
         });
     }
@@ -80,7 +78,7 @@ public class TitleService implements ApplicationListener<ApplicationStartedEvent
                 return titleRepository.findAllByIdStartingWith(language + (StringUtils.isNotEmpty(country) ? "_" + country : ""));
             }
         } else {
-            return StreamSupport.stream(titleRepository.findAll().spliterator(), false).collect(Collectors.toList());
+            return new ArrayList<>(titleRepository.findAll());
         }
     }
 
@@ -113,21 +111,21 @@ public class TitleService implements ApplicationListener<ApplicationStartedEvent
     }
 
     public String getTitle(Title title, Class<?> clazz) {
-        String titleKey = StringUtils.defaultIfEmpty(title.titleKey(), Utils.toFirstLowerCase(clazz.getSimpleName()));
+        String titleKey = StringUtils.defaultIfEmpty(title.titleKey(), Ai4xUtils.toFirstLowerCase(clazz.getSimpleName()));
         return getTitle(titleKey);
     }
 
     public String getTitle(Title title, Field field) {
         Class<?> type = field.getType();
         String titleKey = StringUtils.defaultIfEmpty(title.titleKey(),
-                Utils.toFirstLowerCase(type.getSimpleName()) + "." +Utils.toFirstLowerCase(field.getName()));
+                Ai4xUtils.toFirstLowerCase(type.getSimpleName()) + "." + Ai4xUtils.toFirstLowerCase(field.getName()));
         return getTitle(titleKey);
     }
 
     public String getTitle(Title title, Method method) {
         Class<?> type = method.getDeclaringClass();
         String titleKey = StringUtils.defaultIfEmpty(title.titleKey(),
-                Utils.toFirstLowerCase(type.getSimpleName()) + "." +Utils.toFirstLowerCase(method.getName()));
+                Ai4xUtils.toFirstLowerCase(type.getSimpleName()) + "." + Ai4xUtils.toFirstLowerCase(method.getName()));
         return getTitle(titleKey);
     }
 }
