@@ -19,7 +19,6 @@
         <module>logic</module>
         <module>java2python</module>
         <module>py4spring</module>
-        <module>mosquitto</module>
         <module>docker</module>
         <module>drive</module>
     </modules>

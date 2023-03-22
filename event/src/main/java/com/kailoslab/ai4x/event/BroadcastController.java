@@ -1,6 +1,6 @@
-package com.kailoslab.ai4x.event.stomp;
+package com.kailoslab.ai4x.event;
 
-import com.kailoslab.ai4x.event.BroadcastEvent;
+import com.kailoslab.ai4x.event.stomp.StompProperties;
 import com.kailoslab.ai4x.utils.Constants;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,15 +12,15 @@ import org.springframework.stereotype.Controller;
 
 @Controller
 @Slf4j
-public class StompController {
+public class BroadcastController {
 
     private final StompProperties stompProperties;
     private final SimpMessagingTemplate template;
     private final ApplicationEventPublisher eventPublisher;
 
-    public StompController(@Autowired StompProperties stompProperties,
-                           @Autowired(required = false) SimpMessagingTemplate template,
-                           @Autowired ApplicationEventPublisher eventPublisher) {
+    public BroadcastController(@Autowired StompProperties stompProperties,
+                               @Autowired(required = false) SimpMessagingTemplate template,
+                               @Autowired ApplicationEventPublisher eventPublisher) {
         this.stompProperties = stompProperties;
         this.template = template;
         this.eventPublisher = eventPublisher;
@@ -30,8 +30,8 @@ public class StompController {
     public void broadcastByStompClient(@DestinationVariable String destination, String payload) {
         try {
             BroadcastEvent<?> event = BroadcastEvent.create(destination, payload, stompProperties);
-            eventPublisher.publishEvent(event);
-            send(destination, payload);
+            eventPublisher.publishEvent(event); // 내부
+            send(destination, payload); // 외부
         } catch (Throwable ex) {
             log.error("Cannot parse a BroadcastEvent: {} , {}", destination, payload);
         }

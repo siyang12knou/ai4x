@@ -25,7 +25,7 @@ import static org.springframework.http.converter.json.Jackson2ObjectMapperBuilde
 @Slf4j
 public class Py4SpringDispatcher {
 
-    @Value("${ai4x.py4spring.path:}")
+    @Value("${ai4x.py4spring.path:/py}")
     private String prefixPath;
     private final String paramSeparator = "&";
     private final ObjectMapper mapper = json()

@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("${ai4x.py4spring.path:/}")
+@RequestMapping("${ai4x.py4spring.path:/py}")
 public class Py4SpringRestController {
 
     private final Py4SpringService py4SpringService;

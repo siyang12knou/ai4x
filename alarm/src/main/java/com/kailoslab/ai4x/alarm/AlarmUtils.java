@@ -19,10 +19,6 @@ public class AlarmUtils {
         this.alarmObjectTypeRepository = alarmObjectTypeRepository;
     }
 
-    public AlarmObjectType getAlarmObjectType(ObjectType objectType, ObjectProperty property) {
-        return getAlarmObjectType(objectType.name(), property.name());
-    }
-
     public AlarmObjectType getAlarmObjectType(String objectType, String property) {
         AlarmObjectTypePK id = new AlarmObjectTypePK();
         id.setObjectType(objectType);

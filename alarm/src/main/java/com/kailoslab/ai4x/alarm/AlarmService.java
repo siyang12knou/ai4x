@@ -302,7 +302,7 @@ public class AlarmService implements ApplicationListener<AlarmRequestEvent> {
         history.setLevel(currentLevel);
         history.setValue(value);
         history.setMessage(getMessage(history, objectType));
-        history.setNdId(event.getDomain());
+        history.setDomain(event.getDomain());
 
         if (currentLevel == AlarmLevel.Normal.ordinal()) {
             history.setClear(true);

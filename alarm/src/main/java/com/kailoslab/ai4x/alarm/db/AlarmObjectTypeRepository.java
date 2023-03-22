@@ -9,4 +9,8 @@ import java.util.List;
 public interface AlarmObjectTypeRepository extends JpaRepository<AlarmObjectType, AlarmObjectTypePK> {
 
     List<AlarmObjectType> findByTableName(String tableName);
+
+    boolean existsByTableNameAndAlarmTypeNot(String tableName, Integer alarmType);
+    boolean existsByTableNameAndAlarmType(String tableName, Integer alarmType);
+
 }
