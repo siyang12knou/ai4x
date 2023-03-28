@@ -193,13 +193,14 @@ public class Ai4xUtils {
         String result = null;
         for(String methodName: methodNames) {
             try {
-                Method m = object.getClass().getMethod(methodName, (Class<?>) null);
-                Object obj = m.invoke(object, (Object) null);
+                Method m = object.getClass().getMethod(methodName);
+                Object obj = m.invoke(object);
                 if(ObjectUtils.isNotEmpty(obj)) {
                     result = obj.toString();
                     break;
                 }
             } catch (Throwable ignored) {
+                ignored.printStackTrace();
             }
         }
 

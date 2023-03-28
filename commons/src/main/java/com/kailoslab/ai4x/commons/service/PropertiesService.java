@@ -5,7 +5,7 @@ import com.kailoslab.ai4x.commons.annotation.Title;
 import com.kailoslab.ai4x.commons.data.PropertiesRepository;
 import com.kailoslab.ai4x.commons.data.dto.PropertiesFormatDto;
 import com.kailoslab.ai4x.commons.data.entity.PropertiesEntity;
-import com.kailoslab.ai4x.commons.utils.Constants;
+import com.kailoslab.ai4x.utils.Constants;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
@@ -52,9 +52,7 @@ public class PropertiesService {
     public void saveProperties(String serviceName, String instanceName, Parameter[] paramters) {
         List<PropertiesEntity> oldPropertiesEntities = propertiesRepository.findAllByServiceNameAndInstanceName(serviceName, instanceName);
         Map<String, String> properties = new HashMap<>(oldPropertiesEntities.size());
-        oldPropertiesEntities.forEach(propertiesEntity -> {
-            properties.put(propertiesEntity.getId(), propertiesEntity.getProperties());
-        });
+        oldPropertiesEntities.forEach(propertiesEntity -> properties.put(propertiesEntity.getId(), propertiesEntity.getProperties()));
 
         propertiesRepository.deleteAllByServiceNameAndInstanceName(serviceName, instanceName);
 
@@ -97,7 +95,7 @@ public class PropertiesService {
             }
 
             return null;
-        }).filter(propertiesEntity -> ObjectUtils.isNotEmpty(propertiesEntity)).collect(Collectors.toList());
+        }).filter(ObjectUtils::isNotEmpty).collect(Collectors.toList());
 
         propertiesRepository.saveAll(propertiesEntities);
     }

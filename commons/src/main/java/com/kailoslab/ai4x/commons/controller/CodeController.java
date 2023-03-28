@@ -2,7 +2,7 @@ package com.kailoslab.ai4x.commons.controller;
 
 import com.kailoslab.ai4x.commons.data.entity.CodeEntity;
 import com.kailoslab.ai4x.commons.service.CodeService;
-import com.kailoslab.ai4x.commons.utils.Constants;
+import com.kailoslab.ai4x.utils.Constants;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

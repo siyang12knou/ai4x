@@ -1,9 +1,10 @@
 package com.kailoslab.ai4x.user.config;
 
-import com.kailoslab.ai4x.commons.utils.Constants;
 import com.kailoslab.ai4x.user.data.UserRepository;
 import com.kailoslab.ai4x.user.data.dto.SessionInfoDto;
 import com.kailoslab.ai4x.user.data.entity.UserEntity;
+import com.kailoslab.ai4x.utils.Constants;
+import jakarta.annotation.PostConstruct;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -14,7 +15,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
-import jakarta.annotation.PostConstruct;
 import java.util.*;
 
 @Component

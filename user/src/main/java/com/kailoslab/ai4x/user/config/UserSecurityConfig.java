@@ -1,7 +1,7 @@
 package com.kailoslab.ai4x.user.config;
 
-import com.kailoslab.ai4x.commons.utils.Constants;
 import com.kailoslab.ai4x.user.controller.UserController;
+import com.kailoslab.ai4x.utils.Constants;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;

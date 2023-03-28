@@ -2,7 +2,7 @@ package com.kailoslab.ai4x.commons.data.converter;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.kailoslab.ai4x.commons.utils.Constants;
+import com.kailoslab.ai4x.utils.Constants;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 import lombok.extern.slf4j.Slf4j;
@@ -16,7 +16,8 @@ import java.util.Map;
 public class MapConverter implements AttributeConverter<Map<String, Object>, String> {
 
     TypeReference<HashMap<String,Object>> typeRef
-            = new TypeReference<HashMap<String,Object>>() {};
+            = new TypeReference<>() {
+    };
 
     @Override
     public String convertToDatabaseColumn(Map jsonData) {
