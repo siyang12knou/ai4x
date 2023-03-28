@@ -1,0 +1,8 @@
+  ,---.  ,--.  ,---.,--.   ,--.
+ /  O  \ |  | /    | \  `.'  /
+|  .-.  ||  |/  '  |  .'    \
+|  | |  ||  |'--|  | /  .'.  \
+`--' `--'`--'   `--''--'   '--'
+
+Copyright © 2021 Kailoslab.
+Powered by Spring Boot ${spring-boot.version}
