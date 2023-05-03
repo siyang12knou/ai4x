@@ -22,7 +22,9 @@ import java.lang.reflect.Type;
 import java.math.BigInteger;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
+import java.net.URL;
 import java.net.UnknownHostException;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -629,4 +631,22 @@ public class Ai4xUtils {
 
     public static SubnetUtils getSubnetUtils(String cidrNotation){ return new SubnetUtils(cidrNotation); }
     public static SubnetUtils getSubnetUtils(String address, String mask){ return new SubnetUtils(address, mask); }
+
+    public static String getAbsolutePathWithJar(Class clazz) {
+        URL classResource = clazz.getResource(clazz.getSimpleName() + ".class");
+        if (classResource == null) {
+            throw new RuntimeException("class resource is null");
+        }
+        String url = classResource.toString();
+        if (url.startsWith("jar:file:")) {
+            // extract 'file:......jarName.jar' part from the url string
+            String path = url.replaceAll("^jar:(file:.*[.]jar)!/.*", "$1");
+            try {
+                return Paths.get(new URL(path).toURI()).toString();
+            } catch (Exception e) {
+                throw new RuntimeException("Invalid Jar File URL String");
+            }
+        }
+        throw new RuntimeException("Invalid Jar File URL String");
+    }
 }

@@ -3,10 +3,12 @@ package com.kailoslab.ai4x.commons.data;
 import com.kailoslab.ai4x.commons.data.entity.TitleEntity;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Locale;
 
+@Repository
 public interface TitleRepository  extends JpaRepository<TitleEntity, String> {
     default String generateId(String titleKey) {
         return generateId(titleKey, Locale.getDefault());

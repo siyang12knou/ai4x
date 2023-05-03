@@ -14,7 +14,7 @@ public class JasyptConfig {
         PooledPBEStringEncryptor encryptor = new PooledPBEStringEncryptor();
         SimpleStringPBEConfig config = new SimpleStringPBEConfig();
         config.setPassword("KJFGjocol93p1@E$");
-        config.setAlgorithm("PBEWithMD5AndDES");
+        config.setAlgorithm("PBEWithMD5AndTripleDES");
         config.setKeyObtentionIterations("1000");
         config.setPoolSize("1");
         config.setProviderName("SunJCE");
