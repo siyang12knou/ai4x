@@ -1,71 +1,41 @@
 package com.kailoslab.ai4x.user.config;
 
-import com.kailoslab.ai4x.user.controller.UserController;
-import com.kailoslab.ai4x.utils.Constants;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.vaadin.flow.spring.security.VaadinWebSecurity;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.oauth2.jose.jws.JwsAlgorithms;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
-@Slf4j
-@Configuration
-@EnableWebSecurity
-public class UserSecurityConfig {
+import javax.crypto.spec.SecretKeySpec;
+import java.util.Base64;
 
-    private final AuthSuccessHandler authSuccessHandler;
-    private final AuthFailureHandler authFailureHandler;
+@RequiredArgsConstructor
+public class UserSecurityConfig extends VaadinWebSecurity {
+
+    // The secret is stored in application-secret.yml by default.
+    // Never commit the secret into version control; each environment should have
+    // its own secret.
+    @Value("${com.kailoslab.myaischool.auth.secret}")
+    private String authSecret;
 
     @Value("${server.servlet.session.cookie.name:JSESSIONID}")
     private String sessionName;
 
-    @Autowired(required = false)
-    public UserSecurityConfig(AuthSuccessHandler authSuccessHandler, AuthFailureHandler authFailureHandler) {
-        this.authSuccessHandler = authSuccessHandler;
-        this.authFailureHandler = authFailureHandler;
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+
+        http.authorizeHttpRequests().requestMatchers(new AntPathRequestMatcher("/images/*.*")).permitAll();
+        // Icons from the line-awesome addon
+        http.authorizeHttpRequests().requestMatchers(new AntPathRequestMatcher("/line-awesome/**/*.svg")).permitAll();
+
+        super.configure(http);
+
+        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+        setLoginView(http, "/login");
+        setStatelessAuthentication(http, new SecretKeySpec(Base64.getDecoder().decode(authSecret), JwsAlgorithms.HS256),
+                "com.kailoslab.myaischool");
     }
 
-    @Bean
-    public PasswordEncoder encoder() {
-        return new BCryptPasswordEncoder();
-    }
-
-    @Bean
-    public WebSecurityCustomizer webSecurityCustomizer() {
-        return (web) -> web.ignoring().requestMatchers(new AntPathRequestMatcher(UserController.PATH));
-    }
-
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        return setHttpSecurity(http).build();
-    }
-
-    protected HttpSecurity setHttpSecurity(HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests((auth) -> {
-            try {
-                auth.requestMatchers(new AntPathRequestMatcher(Constants.PATH_API_PREFIX + "/**")).authenticated().anyRequest().permitAll()
-
-                        .and().formLogin().loginPage("/login").loginProcessingUrl("/login")
-                        .successHandler(authSuccessHandler)
-                        .failureHandler(authFailureHandler)
-
-                        .and().logout().logoutUrl("/logout").logoutSuccessUrl("/login").deleteCookies(sessionName)
-
-                        .and().exceptionHandling().accessDeniedPage("/403")
-
-                        .and().csrf().disable();
-            } catch (Exception e) {
-                log.error("Cannot set a security configuration.");
-            }
-        }).httpBasic().disable();
-
-        return http;
-    }
 }

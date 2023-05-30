@@ -10,9 +10,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-@Entity
-@Table(name = "tb_group")
-@Inheritance
+@MappedSuperclass
 public class GroupEntity extends BasicEntity {
     @Id
     @Column(name = "id", nullable = false)

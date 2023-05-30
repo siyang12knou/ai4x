@@ -35,9 +35,15 @@ public class CodeEntity extends BasicEntity {
     }
 
     public CodeEntity(CodePK pk, String name, int ordinal) {
+        this(new CodePK(),  name, ordinal, Constants.SYSTEM_ID);
+    }
+
+    public CodeEntity(CodePK pk, String name, int ordinal, String userId) {
         this.groupId = pk.getGroupId();
         this.codeId = pk.getCodeId();
         this.name = name;
         this.ordinal = ordinal;
+        this.createdUser = userId;
+        this.modifiedUser = userId;
     }
 }
