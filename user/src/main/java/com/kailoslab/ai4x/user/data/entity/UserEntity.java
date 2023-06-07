@@ -3,8 +3,10 @@ package com.kailoslab.ai4x.user.data.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.kailoslab.ai4x.commons.data.entity.BasicEntity;
 import com.kailoslab.ai4x.user.code.AuthNoType;
-import dev.hilla.Nonnull;
-import jakarta.persistence.*;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.Id;
+import jakarta.persistence.MappedSuperclass;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -29,9 +31,6 @@ public class UserEntity extends BasicEntity {
     @Enumerated(EnumType.STRING)
     private AuthNoType authNoType;
     private Boolean enabled = true;
-    @Lob
-    @Column(length = 1000000)
-    private byte @Nonnull [] profilePicture;
 
     public UserEntity(String id, String password, String email) {
         this(id, password, email, "", id);
