@@ -22,10 +22,15 @@ public class UserEntity extends BasicEntity {
     private String id;
     @JsonIgnore
     private String password;
+
     private String name;
+    private String enName;
     private String email;
     private String phone;
 
+    private String country;
+    private String language;
+    private String timeZone;
     private Integer authNo;
     private LocalDateTime authNoCreatedDate;
     @Enumerated(EnumType.STRING)
