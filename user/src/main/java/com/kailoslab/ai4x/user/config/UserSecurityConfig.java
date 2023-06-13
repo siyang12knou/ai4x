@@ -17,7 +17,7 @@ public class UserSecurityConfig extends VaadinWebSecurity {
     // The secret is stored in application-secret.yml by default.
     // Never commit the secret into version control; each environment should have
     // its own secret.
-    @Value("${com.kailoslab.myaischool.auth.secret}")
+    @Value("${kailoslab.auth.secret}")
     private String authSecret;
 
     @Value("${server.servlet.session.cookie.name:JSESSIONID}")
