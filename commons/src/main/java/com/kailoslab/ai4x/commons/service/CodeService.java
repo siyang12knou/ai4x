@@ -1,8 +1,10 @@
 package com.kailoslab.ai4x.commons.service;
 
 import com.kailoslab.ai4x.commons.annotation.CodeGroup;
+import com.kailoslab.ai4x.commons.annotation.DefaultCode;
 import com.kailoslab.ai4x.commons.annotation.Title;
 import com.kailoslab.ai4x.commons.data.CodeRepository;
+import com.kailoslab.ai4x.commons.data.dto.CodeDto;
 import com.kailoslab.ai4x.commons.data.entity.CodeEntity;
 import com.kailoslab.ai4x.commons.data.entity.CodePK;
 import com.kailoslab.ai4x.utils.Ai4xUtils;
@@ -16,6 +18,7 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -88,5 +91,33 @@ public class CodeService implements ApplicationListener<ApplicationStartedEvent>
         } catch (NoSuchFieldException e) {
             return Ai4xUtils.getString(code, "getName", "name");
         }
+    }
+
+    private Boolean isDefaultCode(Class<?> codeGroupClass, Object code) {
+        try {
+            String codeId = Ai4xUtils.getString(code, "name");
+            Field field = codeGroupClass.getField(codeId);
+            DefaultCode title = field.getAnnotation(DefaultCode.class);
+            return title != null;
+        } catch (NoSuchFieldException e) {
+            return false;
+        }
+    }
+
+    public List<CodeDto> getCodeListFromCodeGroupEnum(Class<? extends Enum> codeGroupClass) {
+        CodeGroup codeGroup = codeGroupClass.getDeclaredAnnotation(CodeGroup.class);
+        String codeGroupId = StringUtils.isNotEmpty(codeGroup.value()) ? codeGroup.value() : Ai4xUtils.toFirstLowerCase(codeGroupClass.getSimpleName());
+        Object[] codeList = codeGroupClass.getEnumConstants();
+        List<CodeDto> result = new ArrayList<>(codeList.length);
+        for(Object code: codeList) {
+            String id = Ai4xUtils.getString(code, "name");
+            String name = getTitle(codeGroupClass, code);
+            Boolean defaultCode = isDefaultCode(codeGroupClass, code);
+            if(!StringUtils.isAnyEmpty(id, name)) {
+                result.add(new CodeDto(id, name, defaultCode));
+            }
+        }
+
+        return result;
     }
 }

@@ -10,6 +10,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CodeDto {
-    private String code;
-    private String title;
+    private String codeId;
+    private String name;
+    private Boolean defaultCode;
 }
