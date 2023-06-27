@@ -647,4 +647,9 @@ public class Ai4xUtils {
         }
         throw new RuntimeException("Invalid Jar File URL String");
     }
+
+    public static String getRandomColor() {
+        int nextInt = Constants.random.nextInt(0xffffff + 1);
+        return String.format("#%06x", nextInt);
+    }
 }

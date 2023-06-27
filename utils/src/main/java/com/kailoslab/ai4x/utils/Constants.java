@@ -8,6 +8,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import java.text.NumberFormat;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 
 import static org.springframework.http.converter.json.Jackson2ObjectMapperBuilder.json;
 
@@ -33,4 +34,6 @@ public interface Constants {
 
     String broadcastTopic = "/broadcast";
     List<String> localhost = Arrays.asList("localhost", "127.0.0.1", "0:0:0:0:0:0:0:1");
+
+    Random random = new Random();
 }
