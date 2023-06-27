@@ -35,7 +35,7 @@ public class UserSecurityConfig extends VaadinWebSecurity {
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         setLoginView(http, "/login");
         setStatelessAuthentication(http, new SecretKeySpec(Base64.getDecoder().decode(authSecret), JwsAlgorithms.HS256),
-                "com.kailoslab.myaischool");
+                "com.kailoslab");
     }
 
 }
