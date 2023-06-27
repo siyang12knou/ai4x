@@ -201,9 +201,7 @@ public class Ai4xUtils {
                     result = obj.toString();
                     break;
                 }
-            } catch (Throwable ignored) {
-                ignored.printStackTrace();
-            }
+            } catch (Throwable ignored) {}
         }
 
         return result;
