@@ -15,10 +15,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.io.Resource;
 
 import java.io.FileNotFoundException;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Type;
+import java.lang.reflect.*;
 import java.math.BigInteger;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
@@ -490,7 +487,7 @@ public class Ai4xUtils {
             try {
                 String str = object.toString();
                 return Date.from(LocalDateTime.parse(str,
-                                DateTimeFormatter.ofPattern(Constants.df))
+                                DateTimeFormatter.ofPattern(Constants.dtfStr))
                         .atZone(ZoneId.systemDefault()).toInstant());
             } catch (Exception e) {
                 throw new IllegalArgumentException(e);
@@ -651,5 +648,20 @@ public class Ai4xUtils {
     public static String getRandomColor() {
         int nextInt = Constants.random.nextInt(0xffffff + 1);
         return String.format("#%06x", nextInt);
+    }
+
+    public static List<Field> getAllFields(Class clazz) {
+        if (clazz == null) {
+            return Collections.emptyList();
+        }
+
+        List<Field> result = new ArrayList<>(getAllFields(clazz.getSuperclass()));
+        List<Field> filteredFields = Arrays.stream(clazz.getDeclaredFields()).toList();
+        result.addAll(filteredFields);
+        return result;
+    }
+
+    public static List<Method> getMethod(Class clazz, String methodName) {
+        return Arrays.stream(clazz.getMethods()).filter(method -> StringUtils.equals(method.getName(), methodName)).toList();
     }
 }
