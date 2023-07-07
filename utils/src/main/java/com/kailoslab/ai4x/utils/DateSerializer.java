@@ -39,7 +39,7 @@ public class DateSerializer extends StdSerializer<Date> {
     @Override
     public void serialize(Date value, JsonGenerator gen, SerializerProvider provider) throws IOException {
         LocalDateTime localDateTime = value.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
-        String formattedDateTime = DateTimeFormatter.ofPattern(Constants.df).format(localDateTime);
+        String formattedDateTime = DateTimeFormatter.ofPattern(Constants.dtfStr).format(localDateTime);
         gen.writeString(formattedDateTime);
     }
 

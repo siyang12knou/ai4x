@@ -30,7 +30,8 @@ public interface Constants {
     String COMMA = ",";
 
     NumberFormat nf = NumberFormat.getInstance();
-    String df = "yyyy-MM-dd HH:mm:ss";
+    String dfStr = "yyyy-MM-dd";
+    String dtfStr = dfStr + " HH:mm:ss";
 
     String broadcastTopic = "/broadcast";
     List<String> localhost = Arrays.asList("localhost", "127.0.0.1", "0:0:0:0:0:0:0:1");
