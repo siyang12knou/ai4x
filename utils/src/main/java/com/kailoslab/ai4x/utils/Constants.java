@@ -18,6 +18,7 @@ public interface Constants {
             .modules(new JavaTimeModule())
             .build().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES,false);
     String SYSTEM_ID = "system";
+    String SYSTEM_GROUP_ID = "system";
     String PATH_API_PREFIX = "/api";
     String PATH_API_AI4X_PREFIX = PATH_API_PREFIX + "/ai4x";
     String DEFAULT_GROUP_ID = "0000000000";
