@@ -29,6 +29,7 @@ public interface Constants {
     String COLON = ":";
     String DOT = ".";
     String COMMA = ",";
+    String ALL = "*";
 
     NumberFormat nf = NumberFormat.getInstance();
     String dfStr = "yyyy-MM-dd";
