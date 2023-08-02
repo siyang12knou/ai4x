@@ -1,5 +1,6 @@
 package com.kailoslab.ai4x.commons.data.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
@@ -20,5 +21,6 @@ public class BasicEntity {
     private LocalDateTime modifiedDate;
     @Setter
     @Getter
+    @JsonIgnore
     private Boolean deleted = false;
 }

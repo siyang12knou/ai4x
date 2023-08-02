@@ -105,16 +105,22 @@ public class CodeService implements ApplicationListener<ApplicationStartedEvent>
     }
 
     public List<CodeDto> getCodeListFromCodeGroupEnum(Class<? extends Enum> codeGroupClass) {
+        return getCodeListFromCodeGroupEnum(codeGroupClass, null);
+    }
+
+    public List<CodeDto> getCodeListFromCodeGroupEnum(Class<? extends Enum> codeGroupClass, List<String> includeCodeId) {
         CodeGroup codeGroup = codeGroupClass.getDeclaredAnnotation(CodeGroup.class);
         String codeGroupId = StringUtils.isNotEmpty(codeGroup.value()) ? codeGroup.value() : Ai4xUtils.toFirstLowerCase(codeGroupClass.getSimpleName());
         Object[] codeList = codeGroupClass.getEnumConstants();
         List<CodeDto> result = new ArrayList<>(codeList.length);
         for(Object code: codeList) {
             String id = Ai4xUtils.getString(code, "name");
-            String name = getTitle(codeGroupClass, code);
-            Boolean defaultCode = isDefaultCode(codeGroupClass, code);
-            if(!StringUtils.isAnyEmpty(id, name)) {
-                result.add(new CodeDto(id, name, defaultCode));
+            if(includeCodeId == null || includeCodeId.contains(id)) {
+                String name = getTitle(codeGroupClass, code);
+                Boolean defaultCode = isDefaultCode(codeGroupClass, code);
+                if (!StringUtils.isAnyEmpty(id, name)) {
+                    result.add(new CodeDto(id, name, defaultCode));
+                }
             }
         }
 
