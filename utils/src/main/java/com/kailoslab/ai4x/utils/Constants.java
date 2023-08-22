@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import java.text.NumberFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
@@ -34,6 +35,9 @@ public interface Constants {
     NumberFormat nf = NumberFormat.getInstance();
     String dfStr = "yyyy-MM-dd";
     String dtfStr = dfStr + " HH:mm:ss";
+
+    DateTimeFormatter DTF = DateTimeFormatter.ofPattern(dtfStr);
+    DateTimeFormatter DF = DateTimeFormatter.ofPattern(dfStr);
 
     String broadcastTopic = "/broadcast";
     List<String> localhost = Arrays.asList("localhost", "127.0.0.1", "0:0:0:0:0:0:0:1");

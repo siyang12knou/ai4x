@@ -664,4 +664,39 @@ public class Ai4xUtils {
     public static List<Method> getMethod(Class clazz, String methodName) {
         return Arrays.stream(clazz.getMethods()).filter(method -> StringUtils.equals(method.getName(), methodName)).toList();
     }
+
+    public static Method getFirstMethod(Class clazz, String name) {
+        List<Method> methods = getMethod(clazz, name);
+        if(!methods.isEmpty()) {
+            return methods.get(0);
+        } else if(clazz.getSuperclass() != null) {
+            return getFirstMethod(clazz.getSuperclass(), name);
+        } else {
+            return null;
+        }
+    }
+
+    public static <T> T convert(Object src, Class<T> tClass) throws Exception {
+        T dest = tClass.getConstructor().newInstance();
+        List<Field> fieldList = Ai4xUtils.getAllFields(tClass);
+        fieldList.forEach(field -> {
+            String setterName = "set" + Ai4xUtils.toFirstUpperCase(field.getName());
+            Method setter = getFirstMethod(tClass, setterName);
+            if(setter != null && setter.getParameterCount() == 1) {
+                String getterName = "get" + Ai4xUtils.toFirstUpperCase(field.getName());
+                Method getter = getFirstMethod(src.getClass(), getterName);
+                if(getter != null) {
+                    try {
+                        if(getter.getReturnType().equals(setter.getParameterTypes()[0])) {
+                            setter.invoke(dest, getter.invoke(src));
+                        } else {
+                            setter.invoke(dest, setter.getParameterTypes()[0].cast(getter.invoke(src)));
+                        }
+                    } catch (IllegalAccessException | InvocationTargetException | ClassCastException ignored) {}
+                }
+            }
+        });
+
+        return dest;
+    }
 }
