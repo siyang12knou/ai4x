@@ -35,7 +35,7 @@ public class CodeEntity extends BasicEntity {
     }
 
     public CodeEntity(CodePK pk, String name, int ordinal) {
-        this(new CodePK(),  name, ordinal, Constants.SYSTEM_ID);
+        this(pk, name, ordinal, Constants.SYSTEM_ID);
     }
 
     public CodeEntity(CodePK pk, String name, int ordinal, String userId) {

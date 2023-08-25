@@ -10,6 +10,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Embeddable
+@EqualsAndHashCode
 public class CodePK implements Serializable {
     private String groupId;
     private String codeId;
