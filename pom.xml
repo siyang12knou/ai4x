@@ -21,6 +21,7 @@
         <module>py4spring</module>
         <module>docker</module>
         <module>drive</module>
+        <module>mail</module>
     </modules>
 
 </project>
