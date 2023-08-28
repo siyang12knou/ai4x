@@ -2,16 +2,11 @@ package com.kailoslab.ai4x.user.data.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.kailoslab.ai4x.commons.data.entity.BasicEntity;
-import com.kailoslab.ai4x.user.code.AuthNoType;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.time.LocalDateTime;
 
 @NoArgsConstructor
 @Getter
@@ -31,10 +26,6 @@ public class UserEntity extends BasicEntity {
     private String country;
     private String language;
     private String timeZone;
-    private Integer authNo;
-    private LocalDateTime authNoCreatedDate;
-    @Enumerated(EnumType.STRING)
-    private AuthNoType authNoType;
     private Boolean enabled = true;
 
     public UserEntity(String id, String password, String email) {
