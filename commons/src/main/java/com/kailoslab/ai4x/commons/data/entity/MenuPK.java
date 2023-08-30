@@ -11,8 +11,7 @@ import java.io.Serializable;
 @Setter
 @Embeddable
 @EqualsAndHashCode
-public class MenuActionPK implements Serializable {
+public class MenuPK implements Serializable {
     private String service;
     private String path;
-    private String role;
 }

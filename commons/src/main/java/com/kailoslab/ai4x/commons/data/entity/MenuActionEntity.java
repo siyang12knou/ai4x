@@ -23,11 +23,15 @@ public class MenuActionEntity {
     @Id
     @NotNull(message = Ai4xExceptionMessage.E000003)
     @Size(max = Length.id, message = Ai4xExceptionMessage.E000004)
-    private String menuId;
+    private String service;
     @Id
     @NotNull(message = Ai4xExceptionMessage.E000003)
-    @Size(max = Length.id, message = Ai4xExceptionMessage.E000004)
-    private String roleId;
+    @Size(max = Length.path, message = Ai4xExceptionMessage.E000004)
+    private String path;
+    @Id
+    @NotNull(message = Ai4xExceptionMessage.E000003)
+    @Size(max = Length.name, message = Ai4xExceptionMessage.E000004)
+    private String role;
     private Boolean searchEnabled = true;
     private Boolean downloadEnabled = true;
     private Boolean insertEnabled = true;

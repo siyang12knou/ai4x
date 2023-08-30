@@ -49,16 +49,16 @@ public class PropertiesService {
     }
 
     @Transactional
-    public void saveProperties(String serviceName, String instanceName, Parameter[] paramters) {
+    public void saveProperties(String serviceName, String instanceName, Parameter[] parameters) {
         List<PropertiesEntity> oldPropertiesEntities = propertiesRepository.findAllByServiceNameAndInstanceName(serviceName, instanceName);
         Map<String, String> properties = new HashMap<>(oldPropertiesEntities.size());
         oldPropertiesEntities.forEach(propertiesEntity -> properties.put(propertiesEntity.getId(), propertiesEntity.getProperties()));
 
         propertiesRepository.deleteAllByServiceNameAndInstanceName(serviceName, instanceName);
 
-        if(StringUtils.isNoneEmpty(serviceName, instanceName) && ObjectUtils.isNotEmpty(paramters)) {
-            List<PropertiesEntity> propertiesEntities = IntStream.range(0, paramters.length).mapToObj(index -> {
-                Parameter parameter = paramters[index];
+        if(StringUtils.isNoneEmpty(serviceName, instanceName) && ObjectUtils.isNotEmpty(parameters)) {
+            List<PropertiesEntity> propertiesEntities = IntStream.range(0, parameters.length).mapToObj(index -> {
+                Parameter parameter = parameters[index];
                 PropertiesEntity propertiesEntity = new PropertiesEntity();
                 String propertiesName = parameter.getName();
                 String propertiesType = parameter.getType().getName();

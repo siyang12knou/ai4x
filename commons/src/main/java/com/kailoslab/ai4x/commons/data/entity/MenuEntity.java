@@ -4,6 +4,7 @@ import com.kailoslab.ai4x.commons.code.Length;
 import com.kailoslab.ai4x.commons.exception.Ai4xExceptionMessage;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.IdClass;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,16 +18,17 @@ import javax.validation.constraints.Size;
 @Getter
 @Entity
 @Table(name = "tb_menu")
+@IdClass(MenuPK.class)
 public class MenuEntity extends BasicEntity {
     @Id
     @NotNull(message = Ai4xExceptionMessage.E000003)
     @Size(max = Length.id, message = Ai4xExceptionMessage.E000004)
-    private String id;
+    private String service;
+    @Id
+    @NotNull(message = Ai4xExceptionMessage.E000003)
+    @Size(max = Length.path, message = Ai4xExceptionMessage.E000004)
+    private String path;
     @Size(max = Length.title, message = Ai4xExceptionMessage.E000008)
     @NotNull(message = Ai4xExceptionMessage.E000007)
     private String title;
-    @Size(max = Length.tinytext)
-    private String url;
-    @Size(max = Length.id)
-    private String parent;
 }
