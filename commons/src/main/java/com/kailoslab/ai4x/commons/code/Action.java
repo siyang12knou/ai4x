@@ -3,6 +3,8 @@ package com.kailoslab.ai4x.commons.code;
 public enum Action {
     login,
     logout,
+    create_session,
+    destroy_session,
     create_user,
     update_user,
     delete_user,
@@ -10,4 +12,5 @@ public enum Action {
     download_file,
     delete_file,
     upload_file,
+    etc,
 }
