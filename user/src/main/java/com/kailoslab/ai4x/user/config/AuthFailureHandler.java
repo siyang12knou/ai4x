@@ -24,6 +24,6 @@ public class AuthFailureHandler extends SimpleUrlAuthenticationFailureHandler {
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
         super.onAuthenticationFailure(request, response, exception);
         sessionInfoDto.clear();
-        logService.warn(Action.login, "login failed", exception, Constants.SYSTEM_ID);
+        logService.warn(Action.login, "login failed", exception, Constants.SYSTEM_ID, request);
     }
 }

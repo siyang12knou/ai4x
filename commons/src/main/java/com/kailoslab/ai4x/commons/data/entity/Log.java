@@ -18,6 +18,7 @@ import java.time.LocalDateTime;
 @Table(name = "tb_log")
 public class Log {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Nonnull
     private String caller;
@@ -28,21 +29,23 @@ public class Log {
     private Action action;
     @Nonnull
     private String message;
+    private String clientIp;
     private String userId;
     private String data;
     @Nonnull
     @CreatedDate
     private LocalDateTime createdDate;
 
-    public Log(String caller, Level level, Action action, String message, String userId, LocalDateTime createdDate) {
-        this(caller, level, action, message, userId, createdDate, null);
+    public Log(String caller, Level level, Action action, String message, String clientIp, String userId, LocalDateTime createdDate) {
+        this(caller, level, action, message, clientIp, userId, createdDate, null);
     }
 
-    public Log(String caller, Level level, Action action, String message, String userId, LocalDateTime createdDate, String data) {
+    public Log(String caller, Level level, Action action, String message, String clientIp, String userId, LocalDateTime createdDate, String data) {
         this.caller = caller;
         this.level = level;
         this.action = action;
         this.message = message;
+        this.clientIp = clientIp;
         this.userId = userId;
         this.data = data;
         this.createdDate = createdDate;
