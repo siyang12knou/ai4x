@@ -18,9 +18,7 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static org.reflections.scanners.Scanners.TypesAnnotated;
 
@@ -47,6 +45,20 @@ public class CodeService implements ApplicationListener<ApplicationStartedEvent>
         });
     }
 
+    public Map<String, List<CodeEntity>> getCodeAll() {
+        List<CodeEntity> groupCodeList = getCodeGroupList();
+        Map<String, List<CodeEntity>> codeList = new HashMap<>(groupCodeList.size());
+        for(CodeEntity groupCode: groupCodeList) {
+            codeList.put(groupCode.getCodeId(), getCodeList(groupCode.getCodeId()));
+        }
+
+        return codeList;
+    }
+
+    public List<CodeEntity> getCodeGroupList() {
+        return getCodeList(Constants.DEFAULT_GROUP_ID);
+    }
+
     public List<CodeEntity> getCodeList(String groupId) {
         return codeRepository.findByGroupIdAndDeletedFalseOrderByOrdinal(groupId);
     }
@@ -54,19 +66,21 @@ public class CodeService implements ApplicationListener<ApplicationStartedEvent>
     public void saveCode(CodeGroup codeGroup, Class<?> codeGroupClass) {
         String codeGroupId = StringUtils.isNotEmpty(codeGroup.value()) ? codeGroup.value() : Ai4xUtils.toFirstLowerCase(codeGroupClass.getSimpleName());
         CodePK pk = new CodePK(Constants.DEFAULT_GROUP_ID, codeGroupId);
-        CodeEntity codeGroupEntity = codeRepository.findById(pk).orElse(new CodeEntity(pk));
-        codeGroupEntity.setName(getTitle(codeGroupClass));
-        saveCode(codeGroupEntity);
-        for(Object code: codeGroupClass.getEnumConstants()) {
-            String id = Ai4xUtils.getString(code, "name");
-            String name = getTitle(codeGroupClass, code);
-            if(!StringUtils.isAnyEmpty(id, name)) {
-                int ordinal = Ai4xUtils.getInt(code, "ordinal");
-                pk = new CodePK(codeGroupId, id);
-                CodeEntity codeEntity = codeRepository.findById(pk).orElse(new CodeEntity(pk));
-                codeEntity.setName(name);
-                codeEntity.setOrdinal(ordinal);
-                saveCode(codeEntity);
+        if(!codeRepository.existsById(pk)) {
+            CodeEntity codeGroupEntity = codeRepository.findById(pk).orElse(new CodeEntity(pk));
+            codeGroupEntity.setName(getTitle(codeGroupClass));
+            saveCode(codeGroupEntity);
+            for (Object code : codeGroupClass.getEnumConstants()) {
+                String id = Ai4xUtils.getString(code, "name");
+                String name = getTitle(codeGroupClass, code);
+                if (!StringUtils.isAnyEmpty(id, name)) {
+                    int ordinal = Ai4xUtils.getInt(code, "ordinal");
+                    pk = new CodePK(codeGroupId, id);
+                    CodeEntity codeEntity = codeRepository.findById(pk).orElse(new CodeEntity(pk));
+                    codeEntity.setName(name);
+                    codeEntity.setOrdinal(ordinal);
+                    saveCode(codeEntity);
+                }
             }
         }
     }
