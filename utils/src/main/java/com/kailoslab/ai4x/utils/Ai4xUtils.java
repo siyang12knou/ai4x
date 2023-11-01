@@ -208,8 +208,8 @@ public class Ai4xUtils {
         int result = 0;
         for(String methodName: methodNames) {
             try {
-                Method m = object.getClass().getMethod(methodName, (Class<?>) null);
-                Object obj = m.invoke(object, (Object) null);
+                Method m = object.getClass().getMethod(methodName);
+                Object obj = m.invoke(object);
                 if(ObjectUtils.isNotEmpty(obj)) {
                     result = Integer.parseInt(obj.toString());
                     break;
