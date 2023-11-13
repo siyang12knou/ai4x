@@ -17,9 +17,9 @@ import javax.validation.constraints.Size;
 @Setter
 @Getter
 @Entity
-@Table(name = "tb_menu_action")
-@IdClass(MenuActionPK.class)
-public class MenuActionEntity {
+@Table(name = "tb_menu_use")
+@IdClass(MenuUsePK.class)
+public class MenuUseEntity {
     @Id
     @NotNull(message = Ai4xExceptionMessage.E000003)
     @Size(max = Length.id, message = Ai4xExceptionMessage.E000004)
@@ -32,13 +32,6 @@ public class MenuActionEntity {
     @NotNull(message = Ai4xExceptionMessage.E000003)
     @Size(max = Length.name, message = Ai4xExceptionMessage.E000004)
     private String ownId;
-    @Id
-    @NotNull(message = Ai4xExceptionMessage.E000003)
-    @Size(max = Length.name, message = Ai4xExceptionMessage.E000004)
-    private String role;
-    private Boolean searchEnabled = true;
-    private Boolean downloadEnabled = true;
-    private Boolean insertEnabled = true;
-    private Boolean updateEnabled = true;
-    private Boolean deleteEnabled = true;
+
+    private Boolean used = true;
 }
